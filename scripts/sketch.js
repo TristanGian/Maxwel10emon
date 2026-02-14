@@ -63,7 +63,7 @@ function draw() {
   
   for (let p of allParticles) {
     p.checkBound();
-    p.checkMiddleWall();
+    p.checkMiddleWall(isDoorOpen);
     p.updatePosition();
     p.display();
   }
