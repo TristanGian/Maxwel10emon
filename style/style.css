@@ -80,12 +80,10 @@ body {
     border: 12px solid red; /* Red border around the p5.js canvas itself */
 }
 
-/* ="Demon" overlay */
+/* "Demon" overlay */
 .demon-overlay {
     position: absolute;
-    top: -2.3%;         /* Position it above the canvas */
-    left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -59%);
     width: 140px;    /* Adjust size as needed */
     z-index: 100;    /* Ensure it's on top */
     pointer-events: none; /* Allows clicks to pass through to the canvas */
