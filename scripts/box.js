@@ -15,12 +15,12 @@ class Box {
     }
 
     // calculates entropy as the log of the multiplicity of the macrostate
-	calcEntropy() {
-        console.log(this.particleCounts);
+	calcEntropy(blue_particles,  box_particles, area_box, radius) {
 
-		k = this.totalBalls;
-		b = this.particleCounts["blue"];
-		n = 10; // number of partitions per box, must be >= total num of particles
+        let n = area_box/(Math.PI*radius**2); // number of available microstates (number of ways to fit non-overlapping circles in the box)
+        let k = box_particles;
+        let b = blue_particles;
+
 		return n * Math.log(n / (n - k)) + k * Math.log((n - k) / (k - b)) + b * Math.log((k - b) / b);
 	}
 

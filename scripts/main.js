@@ -5,6 +5,8 @@ let doorBottom = 350;
 let RADIUS = 10;
 let blueCount = 10;
 let redCount = 5;
+let leftEntropy = 0;
+let rightEntropy = 0;
 
 function setup() {
   frameRate(60); 
@@ -128,6 +130,63 @@ function draw() {
   
   // Update particle count displays
   updateParticleCounts(leftBlue, leftRed, rightBlue, rightRed);
+//   console.log(entropy);
+  updateEntropyDisplay(leftBlue, leftRed, rightBlue, rightRed);
+}
+
+function calcEntropy(blue_particles, box_particles, area_box, radius) {
+    // Avoid division by zero and logarithm of zero
+    if (box_particles === 0 || area_box === 0) return 0;
+    
+    let n = area_box / (Math.PI * radius ** 2); // number of available microstates
+    let k = box_particles;
+    let b = blue_particles;
+    
+    // Safety checks to avoid invalid logarithms
+    if (k >= n || b === 0 || k === b) return 0;
+    
+    let term1 = n * Math.log(n / (n - k));
+    let term2 = k * Math.log((n - k) / (k - b));
+    let term3 = b * Math.log((k - b) / b);
+    
+    // Check for NaN values
+    if (isNaN(term1)) term1 = 0;
+    if (isNaN(term2)) term2 = 0;
+    if (isNaN(term3)) term3 = 0;
+    
+    return term1 + term2 + term3;
+}
+
+function updateEntropyDisplay(leftBlue, leftRed, rightBlue, rightRed) {
+    // Calculate the area of each chamber (half the canvas)
+    let area_box = (width / 2) * height;
+    
+    leftEntropy = calcEntropy(leftBlue, leftBlue + leftRed, area_box, RADIUS);
+    rightEntropy = calcEntropy(rightBlue, rightBlue + rightRed, area_box, RADIUS);
+
+    let totalEntropy = leftEntropy + rightEntropy;
+
+    // Update system entropy display
+    let entropyElement = document.getElementById('sys-entropy');
+    if (entropyElement) {
+        entropyElement.textContent = totalEntropy.toFixed(2);
+    }
+    
+    // Update demon entropy display (could represent information gained)
+    let demEntropyElement = document.getElementById('dem-entropy');
+    if (demEntropyElement) {
+        demEntropyElement.textContent = Math.abs(leftEntropy - rightEntropy).toFixed(2);
+    }
+    
+    // Update vertical gauge bars
+    let sysPercent = totalEntropy > 0 ? (leftEntropy / totalEntropy) * 100 : 50;
+    let demPercent = totalEntropy > 0 ? (rightEntropy / totalEntropy) * 100 : 50;
+    
+    let sysGauge = document.getElementById('sys-gauge');
+    let demGauge = document.getElementById('dem-gauge');
+    
+    if (sysGauge) sysGauge.style.height = sysPercent + '%';
+    if (demGauge) demGauge.style.height = demPercent + '%';
 }
 
 // Update particle count displays in the UI
@@ -152,7 +211,6 @@ function updateParticleCounts(leftBlue, leftRed, rightBlue, rightRed) {
   if (rightBlueElem) rightBlueElem.textContent = rightBlue;
   if (rightRedElem) rightRedElem.textContent = rightRed;
 }
-
 
 // Toggle door when spacebar is pressed
 function keyPressed() {
