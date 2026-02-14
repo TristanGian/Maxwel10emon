@@ -1,3 +1,5 @@
+size = 12;
+
 class Particle {
   constructor(x, y, v, a, ballColor) {
     this.x = x;
@@ -15,22 +17,16 @@ class Particle {
 
   openDoor() {
 
-  }
-
-  checkWalls() {
-    if (this.x < this.radius || this.x > width - this.radius) this.vx *= -1;
-    if (this.y < this.radius || this.y > height - this.radius) this.vy *= -1;
-  }
-
-  checkCenterWall() {
-    if (this.x > width / 2 - this.radius && this.x < width / 2 + this.radius) {
-      // Check if particle is in door opening area
-      if (doorOpen && this.y > doorTop && this.y < doorBottom) {
-        // Door is open, allow particle to pass through
-        return;
-      }
-      // Otherwise bounce off wall
-      this.vx *= -1;
+    constructor(color, positionX, positionY, speed, colorValue) {
+        this.color = color;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.speed = speed;
+        this.radius = size;
+        let angle = random(0,360);
+        this.velocityX = speed * Math.cos(angle);
+        this.velocityY = speed * Math.sin(angle);
+        this.colorValue = colorValue;
     }
   }
 

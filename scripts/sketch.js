@@ -26,10 +26,10 @@ function setup() {
   doorBottom = height * 0.58;
   
   for (let i = 0; i < 10; i++) {
-    slowParticles.push(new Particle(random(width), random(height), random(-1,1) * random(1, 2), random(-1,1) * random(1, 2), color(0, 0, 255)));
+    slowParticles.push(new Particle("blue",random(width), random(height), Particle.slow, random(0, 2*Math.PI), color(0, 0, 255)));
   }
   for (let i = 0; i < 10; i++) {
-    fastParticles.push(new Particle(random(width), random(height), random(-1,1) * random(2, 5), random(-1,1) * random(2, 5), color(255, 0, 0)));
+    fastParticles.push(new Particle("red", random(width), random(height), Particle.fast, random(0, 2*Math.PI),  color(255, 0, 0)));
   }
 }
 
@@ -66,12 +66,9 @@ function draw() {
   let allParticles = slowParticles.concat(fastParticles);
   
   for (let p of allParticles) {
-    p.update();
-    p.checkWalls();
-    p.checkCenterWall();
-    for (let other of allParticles) {
-      if (p !== other) p.checkCollision(other);
-    }
+    p.checkBound();
+    p.checkMiddleWall();
+    p.updatePosition();
     p.display();
   }
 
