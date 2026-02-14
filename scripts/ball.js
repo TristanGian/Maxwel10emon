@@ -1,5 +1,5 @@
 class Ball {
-  constructor(x, y, r, id, allBalls) {
+  constructor(x, y, r, id, allBalls, particleType = 'blue') {
     this.pos = createVector(x, y); // vector object from p5.js
     this.vel = p5.Vector.random2D().mult(random(2, 5)); // random unit velocity vector from p5.js multiplied by random speed
     this.r = r;
@@ -7,6 +7,7 @@ class Ball {
     this.id = id;
     this.others = allBalls;
     this.prevX = x; // Track previous position for wall crossing detection
+    this.type = particleType; // 'blue' or 'red'
   }
 
 // Attribute,Data Type,Purpose
@@ -92,14 +93,27 @@ class Ball {
   }
 
   show() {
+    // Color schemes based on particle type
+    let mainColor, glowColor, rimColor;
+    
+    if (this.type === 'red') {
+      mainColor = [255, 82, 82, 220];      // Red
+      glowColor = [255, 82, 82, 40];       // Red glow
+      rimColor = [255, 120, 120, 180];     // Red rim
+    } else {
+      mainColor = [0, 212, 255, 220];      // Blue
+      glowColor = [100, 181, 246, 40];     // Blue glow
+      rimColor = [100, 181, 246, 180];     // Blue rim
+    }
+    
     // Create gradient-like effect with layered circles
     // Outer glow
     noStroke();
-    fill(100, 181, 246, 40);
+    fill(...glowColor);
     circle(this.pos.x, this.pos.y, this.r * 2.4);
     
     // Main ball with gradient simulation
-    fill(0, 212, 255, 220);
+    fill(...mainColor);
     circle(this.pos.x, this.pos.y, this.r * 2);
     
     // Highlight
@@ -108,7 +122,7 @@ class Ball {
     
     // Rim
     noFill();
-    stroke(100, 181, 246, 180);
+    stroke(...rimColor);
     strokeWeight(1.5);
     circle(this.pos.x, this.pos.y, this.r * 2);
   }

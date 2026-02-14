@@ -49,12 +49,44 @@
             </div>
 
             <div class="info-section">
-                <h3>🔬 Particle Statistics</h3>
+                <h3>⚙️ Particle Control</h3>
+                <div class="slider-control">
+                    <label>
+                        <span class="slider-label">
+                            <span class="color-dot blue-dot"></span>
+                            Blue Particles: <span id="blue-value">10</span>
+                        </span>
+                        <input type="range" id="blue-slider" min="0" max="30" value="10" class="particle-slider">
+                    </label>
+                </div>
+                <div class="slider-control">
+                    <label>
+                        <span class="slider-label">
+                            <span class="color-dot red-dot"></span>
+                            Red Particles: <span id="red-value">5</span>
+                        </span>
+                        <input type="range" id="red-slider" min="0" max="30" value="5" class="particle-slider">
+                    </label>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>🔬 Chamber Statistics</h3>
                 <div class="stat-box">
                     <label>Left Chamber</label>
                     <div class="stat-value">
                         <span id="left-count">0</span>
-                        <span class="unit">particles</span>
+                        <span class="unit">total</span>
+                    </div>
+                    <div class="color-breakdown">
+                        <span class="color-stat blue-stat">
+                            <span class="color-dot blue-dot"></span>
+                            <span id="left-blue">0</span>
+                        </span>
+                        <span class="color-stat red-stat">
+                            <span class="color-dot red-dot"></span>
+                            <span id="left-red">0</span>
+                        </span>
                     </div>
                 </div>
 
@@ -62,7 +94,17 @@
                     <label>Right Chamber</label>
                     <div class="stat-value">
                         <span id="right-count">0</span>
-                        <span class="unit">particles</span>
+                        <span class="unit">total</span>
+                    </div>
+                    <div class="color-breakdown">
+                        <span class="color-stat blue-stat">
+                            <span class="color-dot blue-dot"></span>
+                            <span id="right-blue">0</span>
+                        </span>
+                        <span class="color-stat red-stat">
+                            <span class="color-dot red-dot"></span>
+                            <span id="right-red">0</span>
+                        </span>
                     </div>
                 </div>
             </div>
