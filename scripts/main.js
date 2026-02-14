@@ -1,9 +1,9 @@
 let balls = [];
-let doorOpen = false;
+let doorOpen = true;
 let doorTop = 250;
 let doorBottom = 350;
-let RADIUS = 5;
-const ballCount = 50;
+let RADIUS = 15;
+const ballCount = 20;
 
 function setup() {
   frameRate(60); 
@@ -12,7 +12,7 @@ function setup() {
   let w = container.offsetWidth - 200; // Leave some margin
   let h = container.offsetHeight - 200;
   let canvas = createCanvas(w, h);
-  let radius = 10; // Define radius for particles
+  let radius = RADIUS; // Define radius for particles
 
   canvas.parent('canvas-container'); 
   
@@ -20,8 +20,8 @@ function setup() {
   positionDemon();
   
   // Scale door position to canvas height
-  doorTop = height * 0.42;
-  doorBottom = height * 0.58;
+  doorTop = height * 0.15;
+  doorBottom = height * 0.85;
 
   
 
@@ -31,26 +31,38 @@ function setup() {
   rightNumBlue = 0;
   // makes new balls and updates red/blue and left/right accordingly
   for (let i = 0; i < ballCount; i++) {
-    xPos = random(50, width-50);
     let color;
-    if (i%2 == 0){ 
-      color = 'blue';
-      if (xPos < width/2) {
+    let randomBool = true;
+    
+    if (randomBool) {
+      // fill both boxes
+      xPos = random(50, width-50);
+      j = Math.random(0,1);
+      if (j <= 0.5) {
+        color = 'blue';
         leftNumBlue++;
-      } else {
-        rightNumBlue++;
       }
-    } else {
-      color = 'red';
-      if (xPos < width/2) {
+      if (j > 0.5) {
+        color = 'red';
         leftNumRed++;
-      } else {
-        rightNumRed++;
       }
     }
 
-
-
+    if (!randomBool) {
+      if (i<ballCount/2) {
+        // fill left box
+        xPos = random(50, width/2-50);
+        color = 'blue';
+        leftNumBlue++;
+      } else {
+        // fill right box
+        xPos = random(50+width/2, width-50);
+        color = 'red';
+        rightNumRed++;
+      }
+    }
+    
+    
 
     // constructor(x, y, r, id, allBalls)
     balls.push(new Ball(
@@ -127,7 +139,8 @@ function updateGameLogic() {
     console.log("Blue on right " + rightBox.particleCounts['blue'] + " red on right : " + rightBox.particleCounts['red']);
   }
 
-  console.log(leftBox.calcEntropy() + rightBox.calcEntropy());
+  var totalEntropy = leftBox.calcEntropy() + rightBox.calcEntropy();
+  document.getElementById("sys-entropy").textContent = totalEntropy.toFixed(2);
 
   // update boxes
 }
