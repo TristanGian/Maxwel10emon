@@ -35,6 +35,10 @@ class Ball {
         // Place ball just outside the wall
         this.pos.x = crossedFromLeft ? centerX - this.r : centerX + this.r;
         this.vel.x *= -1;
+      } else if (doorOpen) {
+        // return depending from where it moved
+        if (crossedFromLeft) return 'movedFromLeft';
+        if (crossedFromRight) return 'movedFromRight';
       }
     }
 
@@ -53,6 +57,7 @@ class Ball {
       this.pos.y = this.r;
       this.vel.y *= -1;
     }
+    return '';
   }
 
   collide() {

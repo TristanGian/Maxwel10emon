@@ -2,7 +2,8 @@ let balls = [];
 let doorOpen = false;
 let doorTop = 250;
 let doorBottom = 350;
-let RADIUS = 20;
+let RADIUS = 5;
+const ballCount = 50;
 
 function setup() {
   frameRate(60); 
@@ -22,13 +23,38 @@ function setup() {
   doorTop = height * 0.42;
   doorBottom = height * 0.58;
 
-  for (let i = 0; i < 15; i++) {
-    let color = 'red';
-    if (i%2 == 0) color = 'blue';
+  
+
+  leftNumRed = 0;
+  leftNumBlue = 0;
+  rightNumRed = 0;
+  rightNumBlue = 0;
+  // makes new balls and updates red/blue and left/right accordingly
+  for (let i = 0; i < ballCount; i++) {
+    xPos = random(50, width-50);
+    let color;
+    if (i%2 == 0){ 
+      color = 'blue';
+      if (xPos < width/2) {
+        leftNumBlue++;
+      } else {
+        rightNumBlue++;
+      }
+    } else {
+      color = 'red';
+      if (xPos < width/2) {
+        leftNumRed++;
+      } else {
+        rightNumRed++;
+      }
+    }
+
+
+
 
     // constructor(x, y, r, id, allBalls)
     balls.push(new Ball(
-      random(50, width-50), 
+      xPos, 
       random(50, height-50), 
       RADIUS, 
       i, 
@@ -36,7 +62,15 @@ function setup() {
       color
     ));
   }
+
+  leftBox = new Box(leftNumBlue,leftNumRed);
+  rightBox = new Box(rightNumBlue,rightNumRed);
+  console.log("Right has red balls count: " +rightBox.particleCounts['red']);
 }
+
+var leftBox;
+var rightBox;
+
 
 function draw() {
   background(20);
@@ -66,11 +100,36 @@ function draw() {
   text('Press SPACE to toggle door', 10, 30);
   text('Door: ' + (doorOpen ? 'OPEN' : 'CLOSED'), 10, 55);
 
+  updateGameLogic();
+}
+
+function updateGameLogic() {
+
+  // update balls
   for (let b of balls) {
+    let moved;
     b.collide();
-    b.update();
+    moved = b.update();
     b.show();
+    if (moved == '') {
+      continue;
+    } else if (moved == 'movedFromLeft') {
+      leftBox.removeColor(b.color);
+      rightBox.addColor(b.color);
+    } else if (moved == 'movedFromRight') {
+      rightBox.removeColor(b.color);
+      leftBox.addColor(b.color);
+    } else {
+      console.log("stupid idoit");
+    }
+    console.log("-----");
+    console.log("Blue on left " + leftBox.particleCounts['blue'] + " red on left : " + leftBox.particleCounts['red']);
+    console.log("Blue on right " + rightBox.particleCounts['blue'] + " red on right : " + rightBox.particleCounts['red']);
   }
+
+  console.log(leftBox.calcEntropy() + rightBox.calcEntropy());
+
+  // update boxes
 }
 
 
