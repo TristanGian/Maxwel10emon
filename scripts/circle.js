@@ -5,14 +5,16 @@ class circle{
     radius; //int
     velocity //dict -> floats
 
-    constructor(color, positionX, positionY, speed, radius, velocityX, velocityY) {
+    constructor(color, positionX, positionY, speed, radius) {
+        randAngle = random(angle);
+        console.log(randAngle);
         this.color = color;
         this.position.x = positionX;
         this.position.y = positionY;
         this.speed = speed;
         this.radius = radius;
-        this.velocity.x = velocityX;
-        this.velocity.y = velocityY;
+        this.velocity.x = speed * Math.cos(random);
+        this.velocity.y = speed*Math.sin(randAngle);
     }
 
     getColor(){
