@@ -5,18 +5,20 @@ let doorTop = 250;
 let doorBottom = 350;
 
 function setup() {
-  createCanvas(800, 600);
+  let canvas = createCanvas(800, 600);
+
+  canvas.parent('canvas-container'); 
   for (let i = 0; i < 10; i++) {
-    slowParticles.push(new Particle(random(width), random(height), random(-2, 2), random(-2, 2), color(0, 0, 255)));
+    slowParticles.push(new Particle(random(width), random(height), random(-1,1) * random(1, 2), random(-1,1) * random(1, 2), color(0, 0, 255)));
   }
   for (let i = 0; i < 10; i++) {
-    fastParticles.push(new Particle(random(width), random(height), random(1, 5), random(-5, 5), color(255, 0, 0)));
+    fastParticles.push(new Particle(random(width), random(height), random(-1,1) * random(2, 5), random(-1,1) * random(2, 5), color(255, 0, 0)));
   }
 }
 
 function draw() {
   background(30);
-  
+
   // Draw divider with door
   stroke(255);
   strokeWeight(2);
@@ -59,5 +61,13 @@ function draw() {
 function keyPressed() {
   if (key === ' ') {
     doorOpen = !doorOpen;
+    
+    // Change demon image based on door state
+    let demonImg = document.querySelector('.demon-overlay');
+    if (doorOpen) {
+      demonImg.src = 'assets/demon_open.png';
+    } else {
+      demonImg.src = 'assets/demon_closed.png';
+    }
   }
 }
