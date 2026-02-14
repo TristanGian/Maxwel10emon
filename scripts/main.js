@@ -2,7 +2,7 @@ let balls = [];
 let doorOpen = false;
 let doorTop = 250;
 let doorBottom = 350;
-let RADIUS = 20;
+let RADIUS = 5;
 
 function setup() {
   frameRate(60); 
