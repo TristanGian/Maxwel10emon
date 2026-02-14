@@ -31,7 +31,23 @@ class circle{
         this.position.x += this.velocity.x;
         this.positiony += this.velocity.y;
     }
+    checkBound(){
+        if (this.position.x < this.radius || this.position.x > width - this.radius) this.velocity.x *= -1;
+        if (this.position.y < this.radius || this.position.y > height - this.radius) this.velocity.y *= -1;
+    }
 
-    
+    checkMiddleWall(isWallOpen){
+        if (this.position.x > width / 2 - this.radius && this.position.x < width / 2 + this.radius) {
+            if (isWallOpen && this.position.y > doorTop && this.position.y < doorBottom) {
+                return;
+            }
+            this.velocity.x *= -1;
+        }
+    }
+
+    setVelocity(velocityX, velocityY){
+        this.velocity.x = velocityX;
+        this.velocity.y = velocityY;
+    }
 
 }
