@@ -1,0 +1,44 @@
+body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}
+
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+.stats-panel {
+    width: 300px;
+    background: #252525;
+    padding: 20px;
+    border-right: 2px solid #444;
+    display: flex;
+    flex-direction: column;
+}
+
+#canvas-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Crucial for absolute positioning of children */
+    /* border: 12px solid red; Red border around canvas container */
+}
+
+#canvas-container canvas {
+    border: 12px solid red; /* Red border around the p5.js canvas itself */
+}
+
+/* ="Demon" overlay */
+.demon-overlay {
+    position: absolute;
+    top: -2.3%;         /* Position it above the canvas */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;    /* Adjust size as needed */
+    z-index: 100;    /* Ensure it's on top */
+    pointer-events: none; /* Allows clicks to pass through to the canvas */
+}
