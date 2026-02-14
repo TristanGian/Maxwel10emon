@@ -1,21 +1,38 @@
-class Entropy {
-	n = 10; // number of partitions per box, must be >= total num of particles
-	totalEntropy;
+function updateEntropyDisplay(box) {
+    let systemEntropy = box.calcEntropy();
+    let demonEntropy = 0; // Calculate demon entropy here based on your logic
+    
+    // Update text displays 
+    document.getElementById("sys-entropy").textContent = systemEntropy.toFixed(2); // this sets the value
+    document.getElementById("dem-entropy").textContent = demonEntropy.toFixed(2); // its like changing the text in the html file
+    document.getElementById("sys-temp").textContent = box.calcTemp().toFixed(2);
+    
+    // Update vertical gauge bar
+    let totalEntropy = systemEntropy + demonEntropy;
+    let sysPercent;
+    let demPercent
 
-	// calculates entropy as the log of the multiplicity of the macrostate
-	calcEntropy(box) {
-		k = box.numParticles;
-		b = box.particleCounts["blue"];
-		return n * Math.log(n / (n - k)) + k * Math.log((n - k) / (k - b)) + b * Math.log((k - b) / b);
-	}
+    // The "Condition"
+    if (totalEntropy > 0) {
+        // The "True Path" (Calculate the ratio)
+        sysPercent = (systemEntropy / totalEntropy) * 100;
+    } else {
+        // The "False Path" (Avoid division by zero)
+        sysPercent = 0;
+    }
 
-	// calculates the temperature of a box
-	calcTemp(box) {
-		k = box.numParticles;
-		b = box.particleCounts["blue"];
-		slowSpeed = 2 // magic number for now
-		fastSpeed = 5 // magic number for now
-		avgSpeed = (slowSpeed*b + fastSpeed*(k-b))/k
-		return (avgSpeed**2)/3 // assuming mass and boltzman constant = 1
-	}
+
+    // The "Condition"
+    if (totalEntropy > 0) {
+        // The "True Path" (Calculate the ratio)
+        sysPercent = (systemEntropy / totalEntropy) * 100;
+    } else {
+        // The "False Path" (Avoid division by zero)
+        sysPercent = 0;
+    }
+    
+    document.getElementById('sys-gauge').style.height = sysPercent + '%';
+    document.getElementById('dem-gauge').style.height = demPercent + '%';
 }
+
+
