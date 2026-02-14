@@ -12,7 +12,7 @@ function positionDemon() {
     let topOffset = canvasRect.top - containerRect.top;
     
     demonImg.style.left = (leftOffset + canvasRect.width / 2) + 'px';
-    demonImg.style.top = (topOffset ) + 'px';
+    demonImg.style.top = (topOffset - 40) + 'px';
   }
 }
 
@@ -22,8 +22,8 @@ window.addEventListener('resize', positionDemon);
 // p5.js function called when window is resized
 function windowResized() {
   let container = document.getElementById('canvas-container');
-  let w = container.offsetWidth - 100;
-  let h = container.offsetHeight - 100;
+  let w = container.offsetWidth - 200;
+  let h = container.offsetHeight - 200;
   resizeCanvas(w, h);
   
   // Update door position proportionally

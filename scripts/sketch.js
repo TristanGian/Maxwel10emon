@@ -12,8 +12,8 @@ console.log(myBox.particleCounts.blue);
 function setup() {
   // Make canvas responsive to container size
   let container = document.getElementById('canvas-container');
-  let w = container.offsetWidth - 100; // Leave some margin
-  let h = container.offsetHeight - 100;
+  let w = container.offsetWidth - 200; // Leave some margin
+  let h = container.offsetHeight - 200;
   let canvas = createCanvas(w, h);
 
   canvas.parent('canvas-container'); 

@@ -83,7 +83,7 @@ body {
 /* "Demon" overlay */
 .demon-overlay {
     position: absolute;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, -59%);
     width: 140px;    /* Adjust size as needed */
     z-index: 100;    /* Ensure it's on top */
     pointer-events: none; /* Allows clicks to pass through to the canvas */
