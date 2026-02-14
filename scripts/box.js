@@ -9,8 +9,8 @@ class Box {
         this.totalBalls = numBlue + numRed;
         this.particleCounts = { 'blue': numBlue, 'red': numRed};
     }
-
-    replaceDict(dict) {
+    // replaces the particle counts with a new dictionary
+    replaceCountsk(dict) {
         this.particleCounts = dict;
     }
 
