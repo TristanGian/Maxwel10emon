@@ -8,4 +8,10 @@ class Entropy {
 		b = box.particleCounts["blue"];
 		return n*Math.log(n/(n-k)) + k*Math.log((n-k)/(k-b)) + b*Math.log((k-b)/b);
 	}
+
+	calcTemp(box) {
+		// get velocity of all particle
+		// calculate kinetic energy
+		// return average kinetic energy
+	}
 }
