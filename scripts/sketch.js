@@ -10,11 +10,13 @@ myBox.replaceDict(dict);
 console.log(myBox.particleCounts.blue);
 
 function setup() {
+  frameRate(60); 
   // Make canvas responsive to container size
   let container = document.getElementById('canvas-container');
   let w = container.offsetWidth - 200; // Leave some margin
   let h = container.offsetHeight - 200;
   let canvas = createCanvas(w, h);
+  let radius = 10; // Define radius for particles
 
   canvas.parent('canvas-container'); 
   
@@ -26,16 +28,18 @@ function setup() {
   doorBottom = height * 0.58;
   
   for (let i = 0; i < 10; i++) {
-    slowParticles.push(new Particle(random(width), random(height), random(-1,1) * random(1, 2), random(-1,1) * random(1, 2), color(0, 0, 255)));
+    slowParticles.push(new Particle(random(radius, width - radius), random(radius, height - radius), random(-1,1) * random(0.1, 0.5), random(-1,1) * random(0.1, 0.5), color(0, 0, 255), radius));
   }
   for (let i = 0; i < 10; i++) {
-    fastParticles.push(new Particle(random(width), random(height), random(-1,1) * random(2, 5), random(-1,1) * random(2, 5), color(255, 0, 0)));
+    fastParticles.push(new Particle(random(radius, width - radius), random(radius, height - radius), random(-1,1) * random(2, 2.5), random(-1,1) * random(2, 2.5), color(255, 0, 0), radius));
   }
 }
 
 function draw() {
+  
   background(30);
-
+  
+  text('FPS: ' + floor(frameRate()), 10, 20);
   // Draw divider with door
   stroke(255);
   strokeWeight(2);
@@ -63,15 +67,31 @@ function draw() {
   // Combine all particles for collision detection
   let allParticles = slowParticles.concat(fastParticles);
   
-  for (let p of allParticles) {
-    p.update();
-    p.checkWalls();
-    p.checkCenterWall();
-    for (let other of allParticles) {
-      if (p !== other) p.checkCollision(other);
+  // Multiple physics sub-steps per frame
+  let subSteps = 8; // Check collisions 4 times per frame
+  
+  for (let step = 0; step < subSteps; step++) {
+    for (let p of allParticles) {
+      p.update();
+      p.checkWalls();
+      p.checkCenterWall();
+      
+      // Check collisions with all other particles
+      for (let other of allParticles) {
+        if (p !== other) p.checkCollision(other);
+      }
     }
+  }
+  
+  // Display particles only once
+  for (let p of allParticles) {
     p.display();
   }
+
+  // update the entropy display
+  updateEntropyDisplay(myBox);
+  
+
 }
 
 // Toggle door when spacebar is pressed
