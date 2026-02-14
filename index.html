@@ -1,13 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <!-- Imports of external libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>    
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" 
+            onload="renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });"></script>
+
+    <!-- Imports of scripts -->
     <script src="scripts/box.js"></script>
     <script src="scripts/demon.js"></script>
     <script src="scripts/entropy.js"></script>
     <script src="scripts/particle.js"></script>
     <script src="scripts/sketch.js"></script>
     <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 </head>
-<body style="margin:0; overflow:hidden;"></body>
+
+<body style="margin:0; overflow:hidden;"> <!-- This makes -->
+    <div class="dashboard">
+        <aside class="stats-panel">
+            <h2>Thermodynamics</h2>
+
+            <div class="stat-box">
+                <label>System Entropy ($S_{sys}$):</label>
+                <span id="sys-entropy">0.0</span> <!-- Display system's entropy and updates from the var in entropy.js --->
+            </div>
+
+            <div class="stat-box">
+                <label>Demon Entropy ($S_{dem}$):</label>
+                <span id="dem-entropy">0.0</span> <!-- Display demon's entropy and updates from the var in entropy.js --->
+            </div>
+
+            <canvas id="entropyChart"></canvas>
+        </aside>
+
+        <main id="canvas-container"> 
+            <img src="assets/demon_closed.png" alt="Demon Image" class="demon-overlay">
+            <div class="gauge-container-vertical">
+                <div class="gauge-bar-vertical" id="dem-gauge"></div>
+                <div class="gauge-bar-vertical" id="sys-gauge"></div>
+            </div>
+            <div class="text-overlay-bottom">Maxwel1 0emon</div>
+        </main>
+    </div>
+</body>
+
 </html>
