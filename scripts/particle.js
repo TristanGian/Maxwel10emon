@@ -1,3 +1,5 @@
+size = 12;
+
 class Particle {
 
 	static slow = 2;
@@ -8,12 +10,12 @@ class Particle {
     radius; //int //dict -> floats
     colorValue; //color value (0,0,0)
 
-    constructor(color, positionX, positionY, speed, radius, colorValue) {
+    constructor(color, positionX, positionY, speed, colorValue) {
         this.color = color;
         this.positionX = positionX;
         this.positionY = positionY;
         this.speed = speed;
-        this.radius = radius;
+        this.radius = size;
         let angle = random(0,360);
         this.velocityX = speed * Math.cos(angle);
         this.velocityY = speed * Math.sin(angle);
