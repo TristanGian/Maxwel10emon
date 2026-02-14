@@ -1,4 +1,8 @@
 class Particle {
+
+	static slow = 2;
+	static fast = 5;
+
   constructor(x, y, v, a, ballColor) {
     this.x = x;
     this.y = y;

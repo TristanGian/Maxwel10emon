@@ -6,7 +6,7 @@ let doorBottom = 350;
 let myBox = new Box(10,10,3,4);
 console.log(myBox.particleCounts.blue);
 dict = {blue : 5, red : 5};
-myBox.replaceDict(dict);
+myBox.replaceCounts(dict);
 console.log(myBox.particleCounts.blue);
 
 function setup() {
@@ -26,10 +26,10 @@ function setup() {
   doorBottom = height * 0.58;
   
   for (let i = 0; i < 10; i++) {
-    slowParticles.push(new Particle(random(width), random(height), random(-1,1) * random(1, 2), random(-1,1) * random(1, 2), color(0, 0, 255)));
+    slowParticles.push(new Particle(random(width), random(height), Particle.slow, random(0, 2*Math.PI), color(0, 0, 255)));
   }
   for (let i = 0; i < 10; i++) {
-    fastParticles.push(new Particle(random(width), random(height), random(-1,1) * random(2, 5), random(-1,1) * random(2, 5), color(255, 0, 0)));
+    fastParticles.push(new Particle(random(width), random(height), Particle.fast, random(0, 2*Math.PI),  color(255, 0, 0)));
   }
 }
 
