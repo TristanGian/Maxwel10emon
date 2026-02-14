@@ -2,7 +2,7 @@ let balls = [];
 let doorOpen = false;
 let doorTop = 250;
 let doorBottom = 350;
-let RADIUS = 20;
+let RADIUS = 5;
 
 function setup() {
   frameRate(60); 
@@ -35,12 +35,11 @@ function setup() {
 }
 
 function draw() {
-  background(20);
+  background(10, 14, 39);
   
-  text('FPS: ' + floor(frameRate()), 10, 20);
   // Draw divider with door
-  stroke(255);
-  strokeWeight(2);
+  stroke(doorOpen ? color(105, 240, 174, 180) : color(255, 82, 82, 180));
+  strokeWeight(3);
   if (doorOpen) {
     // Draw wall segments with gap for door
     line(width / 2, 0, width / 2, doorTop);
@@ -50,23 +49,39 @@ function draw() {
     line(width / 2, 0, width / 2, height);
   }
   
-  // Draw door frame
-  stroke(doorOpen ? color(0, 255, 0) : color(255, 0, 0));
+  // Draw door frame with glow effect
+  stroke(doorOpen ? color(105, 240, 174) : color(255, 82, 82));
+  strokeWeight(2);
   noFill();
-  rect(width / 2 - 5, doorTop, 10, doorBottom - doorTop);
+  rect(width / 2 - 6, doorTop, 12, doorBottom - doorTop);
   
-  // Instructions in the top left corner
-  fill(255);
-  noStroke();
-  textSize(16);
-  text('Press SPACE to toggle door', 10, 30);
-  text('Door: ' + (doorOpen ? 'OPEN' : 'CLOSED'), 10, 55);
-
+  // Update and draw all balls
+  let leftCount = 0;
+  let rightCount = 0;
+  
   for (let b of balls) {
     b.collide();
     b.update();
     b.show();
+    
+    // Count particles in each chamber
+    if (b.pos.x < width / 2) {
+      leftCount++;
+    } else {
+      rightCount++;
+    }
   }
+  
+  // Update particle count displays
+  updateParticleCounts(leftCount, rightCount);
+}
+
+// Update particle count displays in the UI
+function updateParticleCounts(left, right) {
+  let leftElem = document.getElementById('left-count');
+  let rightElem = document.getElementById('right-count');
+  if (leftElem) leftElem.textContent = left;
+  if (rightElem) rightElem.textContent = right;
 }
 
 
@@ -81,6 +96,17 @@ function keyPressed() {
       demonImg.src = 'assets/demon_open.png';
     } else {
       demonImg.src = 'assets/demon_closed.png';
+    }
+    
+    // Update door status display
+    let statusElem = document.getElementById('door-status');
+    let statusContainer = statusElem.closest('.door-status');
+    if (statusElem) {
+      statusElem.textContent = doorOpen ? 'OPEN' : 'CLOSED';
+      statusElem.className = doorOpen ? 'status-open' : 'status-closed';
+    }
+    if (statusContainer) {
+      statusContainer.className = doorOpen ? 'door-status open' : 'door-status closed';
     }
   }
 }

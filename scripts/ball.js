@@ -92,9 +92,24 @@ class Ball {
   }
 
   show() {
-    fill(50, 200, 255, 200);
-    stroke(255);
-    strokeWeight(2);
+    // Create gradient-like effect with layered circles
+    // Outer glow
+    noStroke();
+    fill(100, 181, 246, 40);
+    circle(this.pos.x, this.pos.y, this.r * 2.4);
+    
+    // Main ball with gradient simulation
+    fill(0, 212, 255, 220);
+    circle(this.pos.x, this.pos.y, this.r * 2);
+    
+    // Highlight
+    fill(255, 255, 255, 150);
+    circle(this.pos.x - this.r * 0.3, this.pos.y - this.r * 0.3, this.r * 0.8);
+    
+    // Rim
+    noFill();
+    stroke(100, 181, 246, 180);
+    strokeWeight(1.5);
     circle(this.pos.x, this.pos.y, this.r * 2);
   }
 }

@@ -1,28 +1,233 @@
+/* ===== GLOBAL STYLES ===== */
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+    color: #e8eaf6;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 .dashboard {
     display: flex;
     height: 100vh;
+    width: 100vw;
 }
 
+/* ===== STATS PANEL ===== */
 .stats-panel {
-    width: 300px;
-    background: #252525;
-    padding: 20px;
-    border-right: 2px solid #444;
+    width: 360px;
+    background: linear-gradient(180deg, rgba(22, 33, 62, 0.95) 0%, rgba(26, 26, 46, 0.98) 100%);
+    backdrop-filter: blur(10px);
+    padding: 0;
+    border-right: 1px solid rgba(100, 181, 246, 0.2);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+.stats-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.stats-panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.stats-panel::-webkit-scrollbar-thumb {
+    background: rgba(100, 181, 246, 0.3);
+    border-radius: 4px;
+}
+
+.stats-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 181, 246, 0.5);
+}
+
+/* ===== PANEL HEADER ===== */
+.panel-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 32px 24px 24px;
+    border-bottom: 2px solid rgba(100, 181, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header .subtitle {
+    margin: 8px 0 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ===== INFO SECTIONS ===== */
+.info-section {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(100, 181, 246, 0.1);
+}
+
+.info-section h3 {
+    margin: 0 0 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64b5f6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .stat-box {
-    margin-bottom: 15px;
+    background: rgba(30, 60, 114, 0.3);
+    border: 1px solid rgba(100, 181, 246, 0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
 }
 
+.stat-box:hover {
+    background: rgba(30, 60, 114, 0.5);
+    border-color: rgba(100, 181, 246, 0.4);
+    transform: translateX(2px);
+}
+
+.stat-box:last-child {
+    margin-bottom: 0;
+}
+
+.stat-box:last-child {
+    margin-bottom: 0;
+}
+
+.stat-box label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.stat-value > span:first-child {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: #ffffff;
+}
+
+.stat-value .unit {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Inter', sans-serif;
+}
+
+/* ===== INSTRUCTIONS ===== */
+.instructions {
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.instructions p {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.instructions kbd {
+    display: inline-block;
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(100, 181, 246, 0.15);
+    border: 1px solid rgba(100, 181, 246, 0.3);
+    border-radius: 4px;
+    color: #64b5f6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.door-status {
+    margin-top: 12px !important;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    border-left: 3px solid;
+}
+
+.status-closed {
+    color: #ff5252;
+    font-weight: 600;
+}
+
+.status-open {
+    color: #69f0ae;
+    font-weight: 600;
+}
+
+.door-status.closed {
+    border-left-color: #ff5252;
+}
+
+.door-status.open {
+    border-left-color: #69f0ae;
+}
+
+/* ===== ENTROPY CHART ===== */
+.entropy-chart-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+}
+
+#entropyChart {
+    width: 100%;
+    height: 180px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(100, 181, 246, 0.2);
+}
+
+/* ===== FOOTER ===== */
+.info-footer {
+    padding: 20px 24px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(100, 181, 246, 0.1);
+}
+
+.info-footer p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+/* ===== GAUGES ===== */
 .gauge-container {
     width: 100%;
     height: 30px;
@@ -38,65 +243,212 @@ body {
     transition: width 0.3s ease;
 }
 
+.gauge-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
 .gauge-container-vertical {
     position: absolute;
-    right: 20px;
+    right: 30px;
     top: 50%;
     transform: translateY(-50%);
-    width: 40px;
-    height: 400px;
-    background: #1a1a1a;
-    border-radius: 5px;
-    border: 2px solid #444;
+    width: 50px;
+    height: 420px;
+    background: linear-gradient(180deg, rgba(10, 14, 39, 0.8) 0%, rgba(26, 26, 46, 0.9) 100%);
+    border-radius: 12px;
+    border: 2px solid rgba(100, 181, 246, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow: hidden;
     z-index: 50;
+    backdrop-filter: blur(10px);
 }
 
 .gauge-bar-vertical {
     width: 100%;
-    transition: height 0.3s ease;
+    transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.gauge-bar-vertical::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        transparent 50%, 
+        rgba(0, 0, 0, 0.2) 100%);
+    pointer-events: none;
 }
 
 #sys-gauge {
-    background: #0099ff; /* Blue for system */
+    background: linear-gradient(180deg, #00d4ff 0%, #0099cc 100%);
+    box-shadow: inset 0 2px 8px rgba(0, 212, 255, 0.4);
 }
 
 #dem-gauge {
-    background: #ff6600; /* Orange for demon */
+    background: linear-gradient(180deg, #ff6600 0%, #cc5200 100%);
+    box-shadow: inset 0 2px 8px rgba(255, 102, 0, 0.4);
 }
 
+.gauge-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+    white-space: nowrap;
+}
+
+.gauge-legend {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== CANVAS CONTAINER ===== */
 #canvas-container {
     flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative; /* Crucial for absolute positioning of children */
-    /* border: 12px solid red; Red border around canvas container */
+    position: relative;
+    background: radial-gradient(circle at center, rgba(30, 60, 114, 0.1) 0%, transparent 70%);
 }
 
 #canvas-container canvas {
-    border: 12px solid red; /* Red border around the p5.js canvas itself */
+    border: 3px solid rgba(100, 181, 246, 0.4);
+    border-radius: 12px;
+    box-shadow: 
+        0 0 40px rgba(100, 181, 246, 0.2),
+        inset 0 0 60px rgba(0, 0, 0, 0.3);
+    background: #0a0e27;
 }
 
-/* "Demon" overlay */
+#canvas-container canvas {
+    border: 3px solid rgba(100, 181, 246, 0.4);
+    border-radius: 12px;
+    box-shadow: 
+        0 0 40px rgba(100, 181, 246, 0.2),
+        inset 0 0 60px rgba(0, 0, 0, 0.3);
+    background: #0a0e27;
+}
+
+/* ===== DEMON OVERLAY ===== */
 .demon-overlay {
     position: absolute;
     transform: translate(-50%, -59%);
-    width: 140px;    /* Adjust size as needed */
-    z-index: 100;    /* Ensure it's on top */
-    pointer-events: none; /* Allows clicks to pass through to the canvas */
+    width: 140px;
+    z-index: 100;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+    transition: all 0.3s ease;
 }
 
-.text-overlay-bottom {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    font-size: 30px;
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    z-index: 100;
+.demon-overlay:hover {
+    transform: translate(-50%, -59%) scale(1.05);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.info-section {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(100, 181, 246, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(100, 181, 246, 0.6);
+    }
+}
+
+.stat-box:hover {
+    animation: pulse 1.5s infinite;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+    .stats-panel {
+        width: 320px;
+    }
+    
+    .panel-header h1 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 900px) {
+    .stats-panel {
+        width: 280px;
+        font-size: 13px;
+    }
+    
+    .info-section {
+        padding: 16px 20px;
+    }
+    
+    .gauge-container-vertical {
+        right: 15px;
+        width: 40px;
+        height: 350px;
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glow {
+    text-shadow: 0 0 10px rgba(100, 181, 246, 0.8);
+}
+
+/* ===== KaTeX STYLING ===== */
+.katex {
+    font-size: 1.1em !important;
+    color: #64b5f6 !important;
 }
