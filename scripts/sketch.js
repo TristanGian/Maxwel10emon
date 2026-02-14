@@ -3,6 +3,11 @@ let slowParticles = [];
 let doorOpen = false;
 let doorTop = 250;
 let doorBottom = 350;
+let myBox = new Box(10,10,3,4);
+console.log(myBox.particleCounts.blue);
+dict = {blue : 5, red : 5};
+myBox.replaceDict(dict);
+console.log(myBox.particleCounts.blue);
 
 function setup() {
   createCanvas(800, 600);
