@@ -12,10 +12,10 @@ console.log(myBox.particleCounts.blue);
 function setup() {
   createCanvas(800, 600);
   for (let i = 0; i < 10; i++) {
-    slowParticles.push(new Particle(random(width), random(height), random(-2, 2), random(-2, 2), color(0, 0, 255)));
+    slowParticles.push(new Particle(random(width), random(height), 2, random(0, 2*Math.PI), color(0, 0, 255)));
   }
   for (let i = 0; i < 10; i++) {
-    fastParticles.push(new Particle(random(width), random(height), random(1, 5), random(-5, 5), color(255, 0, 0)));
+    fastParticles.push(new Particle(random(width), random(height), 5, random(0, 2*Math.PI), color(255, 0, 0)));
   }
 }
 
