@@ -1,5 +1,5 @@
 class Ball {
-  constructor(x, y, r, id, allBalls) {
+  constructor(x, y, r, id, allBalls,color) {
     this.pos = createVector(x, y); // vector object from p5.js
     this.vel = p5.Vector.random2D().mult(random(2, 5)); // random unit velocity vector from p5.js multiplied by random speed
     this.r = r;
@@ -7,6 +7,7 @@ class Ball {
     this.id = id;
     this.others = allBalls;
     this.prevX = x; // Track previous position for wall crossing detection
+    this.color = color; // sets the color of a ball
   }
 
 // Attribute,Data Type,Purpose
@@ -92,7 +93,7 @@ class Ball {
   }
 
   show() {
-    fill(50, 200, 255, 200);
+    fill(this.color);
     stroke(255);
     strokeWeight(2);
     circle(this.pos.x, this.pos.y, this.r * 2);

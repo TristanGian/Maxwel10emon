@@ -23,13 +23,17 @@ function setup() {
   doorBottom = height * 0.58;
 
   for (let i = 0; i < 15; i++) {
+    let color = 'red';
+    if (i%2 == 0) color = 'blue';
+
     // constructor(x, y, r, id, allBalls)
     balls.push(new Ball(
       random(50, width-50), 
       random(50, height-50), 
       RADIUS, 
       i, 
-      balls
+      balls,
+      color
     ));
   }
 }
