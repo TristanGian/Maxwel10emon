@@ -10,9 +10,21 @@ myBox.replaceDict(dict);
 console.log(myBox.particleCounts.blue);
 
 function setup() {
-  let canvas = createCanvas(800, 600);
+  // Make canvas responsive to container size
+  let container = document.getElementById('canvas-container');
+  let w = container.offsetWidth - 200; // Leave some margin
+  let h = container.offsetHeight - 200;
+  let canvas = createCanvas(w, h);
 
   canvas.parent('canvas-container'); 
+  
+  // Position demon relative to canvas
+  positionDemon();
+  
+  // Scale door position to canvas height
+  doorTop = height * 0.42;
+  doorBottom = height * 0.58;
+  
   for (let i = 0; i < 10; i++) {
     slowParticles.push(new Particle(random(width), random(height), random(-1,1) * random(1, 2), random(-1,1) * random(1, 2), color(0, 0, 255)));
   }
