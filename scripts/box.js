@@ -7,7 +7,7 @@ class Box {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.totalBalls = numBlue + numRed;
-        this.particleCounts = { blue: numBlue, red: numRed};
+        this.particleCounts = { 'blue': numBlue, 'red': numRed};
     }
 
     replaceDict(dict) {
