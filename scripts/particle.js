@@ -1,59 +1,51 @@
 class Particle {
+  constructor(x, y, v, a, ballColor) {
+    this.x = x;
+    this.y = y;
+    this.vx = v*Math.cos(a);
+    this.vy = v*Math.sin(a);
+    this.radius = 10;
+    this.ballColor = ballColor;
+  }
 
-	static slow = 2;
-	static fast = 5;
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+  }
 
-  color; //String
-    speed; //float
-    radius; //int //dict -> floats
-    colorValue; //color value (0,0,0)
+  openDoor() {
 
-    constructor(color, positionX, positionY, speed, radius, colorValue) {
-        this.color = color;
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this.speed = speed;
-        this.radius = radius;
-        let angle = random(0,360);
-        this.velocityX = speed * Math.cos(angle);
-        this.velocityY = speed * Math.sin(angle);
-        this.colorValue = colorValue;
+  }
+
+  checkWalls() {
+    if (this.x < this.radius || this.x > width - this.radius) this.vx *= -1;
+    if (this.y < this.radius || this.y > height - this.radius) this.vy *= -1;
+  }
+
+  checkCenterWall() {
+    if (this.x > width / 2 - this.radius && this.x < width / 2 + this.radius) {
+      // Check if particle is in door opening area
+      if (doorOpen && this.y > doorTop && this.y < doorBottom) {
+        // Door is open, allow particle to pass through
+        return;
+      }
+      // Otherwise bounce off wall
+      this.vx *= -1;
     }
+  }
 
-    getColor(){
-        return this.color;
-    }
+  checkCollision(other) {
+    let dx = other.x - this.x;
+    let dy = other.y - this.y;
+    let distance = sqrt(dx * dx + dy * dy);
+    if (distance < this.radius + other.radius) {
+        // Simple elastic collision response
+        let nx = dx / distance;
+        let ny = dy / distance;
 
-    getPosition(){
-        return this.positionX, this.positionY;
+        // Need to finish this
     }
-
-    getVelocity(){
-        return this.velocityX, this.velocityY;
-    }
-
-    updatePosition(){
-        this.positionX += this.velocityX;
-        this.positionY += this.velocityY;
-    }
-    checkBound(){
-        if (this.positionX < this.radius || this.positionX > width - this.radius) this.velocityX *= -1;
-        if (this.positionY < this.radius || this.positionY > height - this.radius) this.velocityY *= -1;
-    }
-
-    checkMiddleWall(isWallOpen){
-        if (this.positionX > width / 2 - this.radius && this.positionX < width / 2 + this.radius) {
-            if (isWallOpen && this.positionY > doorTop && this.positionY < doorBottom) {
-                return;
-            }
-            this.velocityX *= -1;
-        }
-    }
-
-    setVelocity(angle){
-        this.velocityX = speed * Math.cos(angle);
-        this.velocityY = speed * Math.sin(angle);
-    }
+  }
 
     display() {
         fill(this.colorValue);
