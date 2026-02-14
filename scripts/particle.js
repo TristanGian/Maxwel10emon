@@ -1,9 +1,13 @@
 class Particle {
-  constructor(x, y, vx, vy, ballColor) {
+
+	static slow = 2;
+	static fast = 5;
+
+  constructor(x, y, v, a, ballColor) {
     this.x = x;
     this.y = y;
-    this.vx = vx;
-    this.vy = vy;
+    this.vx = v*Math.cos(a);
+    this.vy = v*Math.sin(a);
     this.radius = 10;
     this.ballColor = ballColor;
   }
