@@ -1,13 +1,8 @@
-let fastParticles = [];
-let slowParticles = [];
+let balls = [];
 let doorOpen = false;
 let doorTop = 250;
 let doorBottom = 350;
-let myBox = new Box(10,10,3,4);
-console.log(myBox.particleCounts.blue);
-dict = {blue : 5, red : 5};
-myBox.replaceDict(dict);
-console.log(myBox.particleCounts.blue);
+let RADIUS = 20;
 
 function setup() {
   frameRate(60); 
@@ -26,18 +21,21 @@ function setup() {
   // Scale door position to canvas height
   doorTop = height * 0.42;
   doorBottom = height * 0.58;
-  
-  for (let i = 0; i < 10; i++) {
-    slowParticles.push(new Particle(random(radius, width - radius), random(radius, height - radius), random(-1,1) * random(0.1, 0.5), random(-1,1) * random(0.1, 0.5), color(0, 0, 255), radius));
-  }
-  for (let i = 0; i < 10; i++) {
-    fastParticles.push(new Particle(random(radius, width - radius), random(radius, height - radius), random(-1,1) * random(2, 2.5), random(-1,1) * random(2, 2.5), color(255, 0, 0), radius));
+
+  for (let i = 0; i < 15; i++) {
+    // constructor(x, y, r, id, allBalls)
+    balls.push(new Ball(
+      random(50, width-50), 
+      random(50, height-50), 
+      RADIUS, 
+      i, 
+      balls
+    ));
   }
 }
 
 function draw() {
-  
-  background(30);
+  background(20);
   
   text('FPS: ' + floor(frameRate()), 10, 20);
   // Draw divider with door
@@ -64,35 +62,13 @@ function draw() {
   text('Press SPACE to toggle door', 10, 30);
   text('Door: ' + (doorOpen ? 'OPEN' : 'CLOSED'), 10, 55);
 
-  // Combine all particles for collision detection
-  let allParticles = slowParticles.concat(fastParticles);
-  
-  // Multiple physics sub-steps per frame
-  let subSteps = 4; // Check collisions 4 times per frame
-  
-  for (let step = 0; step < subSteps; step++) {
-    for (let p of allParticles) {
-      p.update();
-      p.checkWalls();
-      p.checkCenterWall();
-      
-      // Check collisions with all other particles
-      for (let other of allParticles) {
-        if (p !== other) p.checkCollision(other);
-      }
-    }
+  for (let b of balls) {
+    b.collide();
+    b.update();
+    b.show();
   }
-  
-  // Display particles only once
-  for (let p of allParticles) {
-    p.display();
-  }
-
-  // update the entropy display
-  // updateEntropyDisplay(myBox);
-  
-
 }
+
 
 // Toggle door when spacebar is pressed
 function keyPressed() {
@@ -108,3 +84,4 @@ function keyPressed() {
     }
   }
 }
+

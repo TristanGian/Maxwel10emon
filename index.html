@@ -5,11 +5,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>    
 
     <!-- Imports of scripts -->
-    <script src="scripts/box.js"></script>
-    <script src="scripts/demon.js"></script>
-    <script src="scripts/entropy.js"></script>
-    <script src="scripts/particle.js"></script>
-    <script src="scripts/sketch.js"></script>
+    <script src="scripts/ball.js"></script>
+    <script src="scripts/main.js"></script>
+	<script src="scripts/demon.js"></script>
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 </head>
@@ -19,12 +17,12 @@
         <aside class="stats-panel">
             <h2>Thermodynamics</h2>
 
-            <div class="stat-box">   
-                <label>System Entropy ($S_{sys}$):</label>
+            <div class="stat-box">    
+                <label>System Entropy ($S_{sys} $):</label>
                 <span id="sys-entropy">0.0</span> <!-- Display system's entropy and updates from the var in entropy.js --->
             </div>
 
-            <div class="stat-box">
+            <div class="stat-box"> 
                 <label>Demon Entropy ($S_{dem}$):</label>
                 <span id="dem-entropy">0.0</span> <!-- Display demon's entropy and updates from the var in entropy.js --->
             </div>
