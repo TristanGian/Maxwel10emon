@@ -1,15 +1,15 @@
 class Box {
-    totalBalls; // total number of balls
-    particleCounts; // two keys, blue and red holding ints for the counts
-    constructor(numBlue, numRed) {
-        this.totalBalls = numBlue + numRed;
-        this.particleCounts = { 'blue': numBlue, 'red': numRed};
-    }
-    // replaces the particle counts with a new dictionary
-    addColor(c) {
-        this.particleCounts[c]++;
-        this.totalBalls++;
-    }
+	totalBalls; // total number of balls
+	particleCounts; // two keys, blue and red holding ints for the counts
+	constructor(numBlue, numRed) {
+		this.totalBalls = numBlue + numRed;
+		this.particleCounts = { 'blue': numBlue, 'red': numRed };
+	}
+	// replaces the particle counts with a new dictionary
+	addColor(c) {
+		this.particleCounts[c]++;
+		this.totalBalls++;
+	}
 
 	resetColors() {
 		this.particleCounts['blue'] = 0;
@@ -17,58 +17,61 @@ class Box {
 		this.totalBalls = 0;
 	}
 
-    // calculates entropy as the log of the multiplicity of the macrostate
+	// calculates entropy as the log of the multiplicity of the macrostate
 	calcEntropy() {
-        //console.log(this.particleCounts);
+		//console.log(this.particleCounts);
 
 		let k = this.totalBalls;
-        let b = this.particleCounts["blue"];
-		let n = (width*height/2)/(2*RADIUS); // number of partitions per box, ie. num of balls that can fit inside
+		let b = this.particleCounts["blue"];
+		let n = (width * height / 2) / (2 * RADIUS); // number of partitions per box, ie. num of balls that can fit inside
 		let entropy;
 
-		// if all blue or no blue
-		if (k-b == 0 || b==0)
+		// if no balls
+		if (k == 0) {
+			entropy = 0;
+		// if all blue or all red
+		} else if (k - b == 0 || b == 0)
 			entropy = n * Math.log(n / (n - k)) + k * Math.log((n - k) / k);
 		else
 			entropy = n * Math.log(n / (n - k)) + k * Math.log((n - k) / (k - b)) + b * Math.log((k - b) / b);
-        return entropy
+		return entropy
 	}
 
 	// calculates the temperature of a box
 	calcTemp(balls) {
-	if (balls.length == 0)
-		return 0;
+		if (balls.length == 0)
+			return 0;
 
-	// get list of velocities to take average
-	let velocities = [];
-	for (let i = 0; i < balls.length; i++) {
-		// note we use velocity squared since KE = 1/2 m v**2
-		velocities.push(balls[i].vel.x**2 + balls[i].vel.y**2 )
-	}
+		// get list of velocities to take average
+		let velocities = [];
+		for (let i = 0; i < balls.length; i++) {
+			// note we use velocity squared since KE = 1/2 m v**2
+			velocities.push(balls[i].vel.x ** 2 + balls[i].vel.y ** 2)
+		}
 		// get average velocity then speed
 		let avgSpeed = this.avg(velocities)
 
 		// use equipartition theorem to find temperature
-		return MASS*(avgSpeed)/3; // assuming mass and boltzman constant = 1
+		return MASS * (avgSpeed) / 3; // assuming mass and boltzman constant = 1
 	}
 
-    factorial(n) {
-        if (n < 0) {
-          return "Factorial is not defined for negative numbers";
-        }
-        // Base case: Factorial of 0 or 1 is 1
-        if (n === 0 || n === 1) {
-          return 1;
-        }
-        // Recursive case: n! = n * (n-1)!
-        return n * this.factorial(n - 1);
-      }
+	factorial(n) {
+		if (n < 0) {
+			return "Factorial is not defined for negative numbers";
+		}
+		// Base case: Factorial of 0 or 1 is 1
+		if (n === 0 || n === 1) {
+			return 1;
+		}
+		// Recursive case: n! = n * (n-1)!
+		return n * this.factorial(n - 1);
+	}
 
 	avg(numbers) {
 		let sum = 0;
-		for (let i=0; i < numbers.length;i++) {
+		for (let i = 0; i < numbers.length; i++) {
 			sum += numbers[i];
 		}
-		return sum/numbers.length;
+		return sum / numbers.length;
 	}
 }
