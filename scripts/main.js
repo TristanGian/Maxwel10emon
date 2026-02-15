@@ -2,8 +2,9 @@ let balls = [];
 let doorOpen = true;
 let doorTop = 250;
 let doorBottom = 350;
-let RADIUS = 10;
-const ballCount = 50;
+let RADIUS = 15;
+const ballCount = 3;
+let demonEntropy = 0;
 var leftBalls = [];
 var rightBalls = [];
 
@@ -25,8 +26,8 @@ function setup() {
 	positionDemon();
 
 	// Scale door position to canvas height
-	doorTop = height * 0.15;
-	doorBottom = height * 0.85;
+	doorTop = height * 0.30;
+	doorBottom = height * 0.70;
 
 
 
@@ -82,6 +83,12 @@ function setup() {
 
 	leftBox = new Box(leftNumBlue, leftNumRed);
 	rightBox = new Box(rightNumBlue, rightNumRed);
+  let totalblue = leftNumBlue + rightNumBlue
+  let totalred = leftNumRed + rightNumRed
+  let templeftbox = new Box(totalblue, 0);
+  let temprightbox = new Box(0, totalred);
+  let lowestEntropy = templeftbox.calcEntropy() + temprightbox.calcEntropy();
+  document.getElementById("min-entropy").textContent = lowestEntropy.toFixed(2);
 	//console.log("Right has red balls count: " +rightBox.particleCounts['red']);
 }
 
@@ -165,8 +172,9 @@ function updateGameLogic() {
 // Toggle door when spacebar is pressed
 function keyPressed() {
 	if (key === ' ') {
+    demonEntropy += 10;
 		doorOpen = !doorOpen;
-
+    document.getElementById("dem-entropy").textContent = demonEntropy;
 		// Change demon image based on door state
 		let demonImg = document.querySelector('.demon-overlay');
 		if (doorOpen) {

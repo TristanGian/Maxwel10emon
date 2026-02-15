@@ -1,7 +1,7 @@
 class Ball {
 	constructor(x, y, r, id, allBalls, color) {
 		this.pos = createVector(x, y); // vector object from p5.js
-		this.vel = p5.Vector.random2D().mult(random(5, 10)); // random unit velocity vector from p5.js multiplied by random speed
+		this.vel = p5.Vector.random2D().mult(random(3, 5)); // random unit velocity vector from p5.js multiplied by random speed
 		this.r = r;
 		this.m = r * 0.1; // Mass proportional to size
 		this.id = id;
