@@ -3,7 +3,7 @@ let doorOpen = true;
 let doorTop = 250;
 let doorBottom = 350;
 let RADIUS = 15;
-const ballCount = 10;
+const ballCount = 50;
 
 function setup() {
 	frameRate(60);
@@ -32,7 +32,7 @@ function setup() {
 	// makes new balls and updates red/blue and left/right accordingly
 	for (let i = 0; i < ballCount; i++) {
 		let color;
-		let randomBool = true;
+		let randomBool = false;
 
 		if (randomBool) {
 			// fill both boxes

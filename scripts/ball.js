@@ -23,8 +23,14 @@ class Ball {
 		this.pos.y += this.vel.y;
 
 		// check bound
-		if (this.pos.x < RADIUS || this.pos.x > width - RADIUS) this.vel.x *= -1;
-		if (this.pos.y < RADIUS || this.pos.y > height - RADIUS) this.vel.y *= -1;
+		if (this.pos.x < RADIUS || this.pos.x > width - RADIUS) {
+			this.vel.x *= -1;
+			this.pos.x += 2*this.vel.x;
+		}
+		if (this.pos.y < RADIUS || this.pos.y > height - RADIUS) {
+			this.vel.y *= -1;
+			this.pos.y += 2*this.vel.y;
+		}
 
 		// at center wall
 		if (this.pos.x > width / 2 - RADIUS && this.pos.x < width / 2 + RADIUS) {
