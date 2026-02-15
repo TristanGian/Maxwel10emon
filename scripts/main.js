@@ -23,6 +23,9 @@ let timeStep = 0;                       // Time counter for x-axis
 const MAX_CHART_POINTS = 300;          // Maximum data points to display
 let multiplicityChart = null;           // Chart.js instance for multiplicity curve
 let currentStateIndex = 0;              // Index of current state on multiplicity curve
+let totalEnergy = 0;                    // Total kinetic energy of the system
+const SPEED_SCALE = 0.01;               // Conversion factor: pixels/frame to m/s
+const MASS_SCALE = 0.001;               // Conversion factor: radius units to kg
 
 function setup() {
   frameRate(60); 
@@ -273,6 +276,9 @@ function draw() {
   
   // Update multiplicity chart to show current state
   updateMultiplicityChart();
+  
+  // Calculate and display total energy
+  calculateAndDisplayEnergy();
 }
 
 function calcEntropy(blue_particles, box_particles, area_box, radius) {
@@ -683,6 +689,30 @@ function updateMultiplicityChart() {
   // Update current state marker
   multiplicityChart.data.datasets[1].data = [{ x: data.currentX, y: data.currentY }];
   multiplicityChart.update('none');
+}
+
+// Calculate total kinetic energy of the system
+// Energy = 0.5 * m * v^2 (in Joules)
+function calculateAndDisplayEnergy() {
+  totalEnergy = 0;
+  
+  for (let b of balls) {
+    // Convert p5.js velocity (pixels/frame) to m/s
+    let speedMS = b.vel.mag() * SPEED_SCALE;
+    
+    // Convert ball mass (radius-based) to kg
+    let massKG = b.m * MASS_SCALE;
+    
+    // Calculate kinetic energy for this particle: E = 0.5 * m * v^2
+    let particleEnergy = 0.5 * massKG * speedMS * speedMS;
+    totalEnergy += particleEnergy;
+  }
+  
+  // Display total energy in HTML
+  let energyElement = document.getElementById('total-energy');
+  if (energyElement) {
+    energyElement.textContent = totalEnergy.toFixed(6);
+  }
 }
 
 // Toggle door when spacebar is pressed
