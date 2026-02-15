@@ -2,8 +2,10 @@ let balls = [];
 let doorOpen = true;
 let doorTop = 250;
 let doorBottom = 350;
-let RADIUS = 15;
+let RADIUS = 10;
 const ballCount = 50;
+var leftBalls = [];
+var rightBalls = [];
 
 function setup() {
 	frameRate(60);
@@ -113,8 +115,12 @@ function draw() {
 	text('Press SPACE to toggle door', 10, 30);
 	text('Door: ' + (doorOpen ? 'OPEN' : 'CLOSED'), 10, 55);
 
+	// reset some properties for calculations in updateGameLogic()
 	leftBox.resetColors();
 	rightBox.resetColors();
+	leftBalls = [];
+	rightBalls = [];
+
 	updateGameLogic();
 }
 
@@ -129,18 +135,28 @@ function updateGameLogic() {
 
 		// count how many colors in each box
 		if (b.pos.x < width / 2) {
+			leftBalls.push(b)
 			leftBox.addColor(b.color)
 		} else if (b.pos.x > width / 2)
+			rightBalls.push(b)
 			rightBox.addColor(b.color)
 	}
 
-	console.log("LEFT:  " + leftBox.particleCounts['blue'] + " blue " + leftBox.particleCounts['red'] + " red ");
-	console.log("RIGHT:  " + rightBox.particleCounts['blue'] + " blue " + rightBox.particleCounts['red'] + " red ");
+	//console.log("LEFT:  " + leftBox.particleCounts['blue'] + " blue " + leftBox.particleCounts['red'] + " red ");
+	//console.log("RIGHT:  " + rightBox.particleCounts['blue'] + " blue " + rightBox.particleCounts['red'] + " red ");
+	console.log("LEFT: " + leftBalls.length + "balls")
+	console.log("RIGHT: " + rightBalls.length  + "balls")
 
+	// calculate entropy
 	var totalEntropy = leftBox.calcEntropy() + rightBox.calcEntropy();
 	document.getElementById("sys-entropy").textContent = totalEntropy.toFixed(2);
 
-	// update boxes
+	// calculate temperatures
+	var leftTemp = leftBox.calcTemp(leftBalls);
+	document.getElementById("left-temp").textContent = leftTemp.toFixed(2);
+	var rightTemp = rightBox.calcTemp(rightBalls);
+	document.getElementById("right-temp").textContent = rightTemp.toFixed(2);
+
 }
 
 

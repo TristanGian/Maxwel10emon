@@ -45,13 +45,21 @@ class Box {
 	}
 
 	// calculates the temperature of a box
-	calcTemp() {
-		k = this.totalBalls;
-		b = this.particleCounts["blue"];
-		slowSpeed = 2; // magic number for now
-		fastSpeed = 5; // magic number for now
-		avgSpeed = (slowSpeed*b + fastSpeed*(k-b))/k;
-		return (avgSpeed**2)/3; // assuming mass and boltzman constant = 1
+	calcTemp(balls) {
+	if (balls.length == 0)
+		return 0;
+
+	// get list of velocities to take average
+	let velocities = [];
+	for (let i = 0; i < balls.length; i++) {
+		// note we use velocity squared since KE = 1/2 m v**2
+		velocities.push(balls[i].vel.x**2 + balls[i].vel.y**2 )
+	}
+		// get average velocity then speed
+		let avgSpeed = this.avg(velocities)
+
+		// use equipartition theorem to find temperature
+		return (avgSpeed)/3; // assuming mass and boltzman constant = 1
 	}
 
     factorial(n) {
@@ -65,4 +73,12 @@ class Box {
         // Recursive case: n! = n * (n-1)!
         return n * this.factorial(n - 1);
       }
+
+	avg(numbers) {
+		let sum = 0;
+		for (let i=0; i < numbers.length;i++) {
+			sum += numbers[i];
+		}
+		return sum/numbers.length;
+	}
 }
