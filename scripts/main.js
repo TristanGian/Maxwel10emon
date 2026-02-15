@@ -18,7 +18,6 @@ function setup() {
 	let h = container.offsetHeight - 200;
 	let canvas = createCanvas(w, h);
 	let radius = RADIUS; // Define radius for particles
-	document.getElementById("max-entropy").textContent = Box.calcMaxEntropy().toFixed(2);
 
 	canvas.parent('canvas-container');
 
