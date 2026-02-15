@@ -1,3 +1,22 @@
+let beat = new Audio('assets/short-pop.mp3');
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let audioBuffer = null;
+
+// 1. Fetch and decode the audio once
+fetch('assets/short-pop.mp3')
+  .then(res => res.arrayBuffer())
+  .then(data => audioContext.decodeAudioData(data))
+  .then(buffer => audioBuffer = buffer);
+
+// 2. Play overlapping instances
+function playSound() {
+  if (!audioBuffer) return;
+  const source = audioContext.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(audioContext.destination);
+  source.start(0); // Plays immediately
+}
+
 class Ball {
   constructor(x, y, r, id, allBalls, particleType = 'blue') {
     this.pos = createVector(x, y); // vector object from p5.js
@@ -105,6 +124,7 @@ class Ball {
   }
 
   collide() {
+    
     for (let i = this.id + 1; i < this.others.length; i++) { // this ensures each pair is only checked once     
       let other = this.others[i];
       let distanceVect = p5.Vector.sub(other.pos, this.pos);
@@ -112,6 +132,9 @@ class Ball {
       let minDistance = this.r + other.r;
 
       if (distanceMag < minDistance) {
+        //beat.load();
+        //beat.play();
+        if (redCount+ blueCount < 20) playSound();
         // 1. Resolve Overlap
         let overlap = minDistance - distanceMag;
         let nudge = distanceVect.copy().setMag(overlap / 2);
