@@ -23,15 +23,25 @@ class Box {
 
 		let k = this.totalBalls;
         let b = this.particleCounts["blue"];
-		
 		let n = (width*height/2)/(2*RADIUS); // number of partitions per box, ie. num of balls that can fit inside
 		let entropy;
+
 		if (k-b <= 0)
 			entropy = n * Math.log(n / (n - k)) + k * Math.log((n - k) / 1) + b * Math.log(1 / b); 
 		else
 			entropy = n * Math.log(n / (n - k)) + k * Math.log((n - k) / (k - b)) + b * Math.log((k - b) / (b+1));
         //let entropy = Math.log(this.factorial(n) / (this.factorial(k)*this.factorial(n-k))) + Math.log(this.factorial(k) / (this.factorial(k-b) *this.factorial(b)));
         return entropy
+	}
+
+	static calcMaxEntropy() {
+		let k = ballCount/2;
+        let b = k/2;
+		let n = (width*height/2)/(2*RADIUS); // number of partitions per box, ie. num of balls that can fit inside
+		let entropy;
+
+		entropy = n * Math.log(n / (n - k)) + k * Math.log((n - k) / (k - b)) + b * Math.log((k - b) / b);
+        return 2*entropy
 	}
 
 	// calculates the temperature of a box
