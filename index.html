@@ -6,7 +6,8 @@
     <title>Maxwell's Demon - Thermodynamics Simulation</title>
     
     <!-- Imports of external libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>    
 
     <!-- Imports of scripts -->
     <script src="scripts/ball.js"></script>
@@ -56,7 +57,7 @@
                             <span class="color-dot blue-dot"></span>
                             Blue Particles: <span id="blue-value">10</span>
                         </span>
-                        <input type="range" id="blue-slider" min="0" max="30" value="10" class="particle-slider">
+                        <input type="range" id="blue-slider" min="0" max="100" value="10" class="particle-slider">
                     </label>
                 </div>
                 <div class="slider-control">
@@ -65,7 +66,7 @@
                             <span class="color-dot red-dot"></span>
                             Red Particles: <span id="red-value">5</span>
                         </span>
-                        <input type="range" id="red-slider" min="0" max="30" value="5" class="particle-slider">
+                        <input type="range" id="red-slider" min="0" max="100" value="5" class="particle-slider">
                     </label>
                 </div>
             </div>
@@ -110,16 +111,28 @@
             </div>
 
             <div class="info-section">
-                <h3>ℹ️ Instructions</h3>
+                <h3>ℹ️ Instructions & Demo</h3>
                 <div class="instructions">
                     <p><kbd>SPACE</kbd> Toggle door</p>
                     <p class="door-status">Door: <span id="door-status" class="status-closed">CLOSED</span></p>
+                </div>
+                <div class="perfect-demon-toggle">
+                    <label for="perfect-demon-checkbox" class="checkbox-label">
+                        <input type="checkbox" id="perfect-demon-checkbox" class="checkbox-input">
+                        <span class="checkbox-text">Perfect Demon Mode</span>
+                    </label>
+                    <p class="toggle-hint">Sorts all blue ◀︎ left | right ▶︎ all red</p>
                 </div>
             </div>
 
             <div class="info-section entropy-chart-section">
                 <h3>📈 Entropy Over Time</h3>
                 <canvas id="entropyChart"></canvas>
+            </div>
+
+            <div class="info-section entropy-chart-section">
+                <h3>📊 Multiplicity Curve</h3>
+                <canvas id="multiplicityChart"></canvas>
             </div>
 
             <div class="info-footer">

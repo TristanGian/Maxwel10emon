@@ -30,11 +30,22 @@ class Ball {
     if (crossedFromLeft || crossedFromRight) {
       // Check if ball is in door opening area
       let inDoorArea = this.pos.y > doorTop && this.pos.y < doorBottom;
-      // Bounce if door is closed OR if particle is outside door area when open
-      if (!doorOpen || !inDoorArea) {
-        // Place ball just outside the wall
-        this.pos.x = crossedFromLeft ? centerX - this.r : centerX + this.r;
-        this.vel.x *= -1;
+      
+      if (perfectMode) {
+        // In perfect mode, only allow correct particles to pass through door area
+        let isCorrectParticle = (this.type === 'blue' && crossedFromLeft) || (this.type === 'red' && crossedFromRight);
+        if (!inDoorArea || !isCorrectParticle) {
+          // Bounce if outside door area or wrong particle type
+          this.pos.x = crossedFromLeft ? centerX - this.r : centerX + this.r;
+          this.vel.x *= -1;
+        }
+      } else {
+        // Normal mode: Bounce if door is closed OR if particle is outside door area when open
+        if (!doorOpen || !inDoorArea) {
+          // Place ball just outside the wall
+          this.pos.x = crossedFromLeft ? centerX - this.r : centerX + this.r;
+          this.vel.x *= -1;
+        }
       }
     }
 

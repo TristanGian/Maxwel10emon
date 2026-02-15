@@ -908,3 +908,267 @@ This represents the configurational entropy based on:
 - Lower entropy = more order/fewer possible arrangements
 
 ---
+
+## 10. Szilard Engine Entropy Budget System Implementation
+
+### Problem
+The demon entropy system needed proper thermodynamic constraints based on Szilard's engine:
+- Each measurement costs **kBT·ln(2)** entropy (Landauer's principle)
+- Demon has finite entropy budget (max 500)
+- User must balance: decreasing system entropy vs. paying measurement costs
+- Previous system incorrectly showed entropy differences without cost
+
+### Changes Made to `main.js`
+
+**Added entropy budget tracking variables:**
+```javascript
+let systemEntropy = 0;           // Total system entropy
+let demonEntropy = 0;            // Demon's entropy cost accumulated
+let demonBudget = 500;           // Maximum demon entropy budget
+let kBT_ln2 = 0.693;             // Cost per measurement: kBT*ln(2) ≈ 0.693
+let doorWasPreviouslyOpen = false; // Track door state transitions
+```
+
+**Why:**
+- Tracks cumulative entropy cost as user opens/closes door
+- Each door opening triggers a measurement, costing kBT·ln(2)
+- Budget enforces thermodynamic constraint
+- State flag prevents cost from being applied multiple times per opening
+
+**Completely rewrote `updateEntropyDisplay()` function:**
+
+The new function:
+1. **Measures door state transition** - detects when door changes from closed to open
+2. **Applies entropy cost** - adds kBT·ln(2) ≈ 0.693 to demonEntropy when door opens
+3. **Clamps demon budget** - ensures demonEntropy stays between 0 and 500
+4. **Updates system entropy** - calculates current disorder of particles
+5. **Updates UI displays:**
+   - System Entropy: shows current system disorder (lower is better)
+   - Demon Budget: shows remaining cost allowance (out of 500)
+   - Orange Gauge: fills 0-100% as demon uses budget (dem-gauge)
+   - Blue Gauge: shows system entropy relative to maximum (sys-gauge)
+
+**Key Logic:**
+```javascript
+// Detect door opening
+if (doorOpen && !doorWasPreviouslyOpen) {
+    demonEntropy += kBT_ln2;  // Apply measurement cost
+}
+doorWasPreviouslyOpen = doorOpen;  // Update state
+
+// Clamp to valid range
+if (demonEntropy > demonBudget) demonEntropy = demonBudget;
+if (demonEntropy < 0) demonEntropy = 0;
+
+// Display remaining budget (not cost)
+let remainingBudget = demonBudget - demonEntropy;
+demEntropyElement.textContent = remainingBudget.toFixed(2);
+
+// Orange gauge: cost used (0 to 500)
+let demonGaugePercent = (demonEntropy / demonBudget) * 100;
+demGauge.style.height = Math.min(100, demonGaugePercent) + '%';
+
+// Blue gauge: system entropy as proportion
+let maxEntropy = systemEntropy + demonBudget;
+let sysGaugePercent = (systemEntropy / maxEntropy) * 100;
+sysGauge.style.height = sysGaugePercent + '%';
+```
+
+### How It Works
+
+**Measurement Cost:**
+- User presses SPACE to open door
+- System detects transition from closed → open
+- Adds 0.693 to demonEntropy (one-time per opening)
+- Closing and reopening door triggers another 0.693 cost
+- User can read cost: check how fast orange gauge fills
+
+**Budget Constraint:**
+- Start with 500 total budget
+- Each measurement costs ~0.693
+- Can perform ~721 measurements before budget exhausted
+- Once budget exhausted, door still works but "wasted"
+- Forces strategic decision-making
+
+**Gameplay:**
+- **Goal:** Minimize system entropy while respecting budget
+- **Strategy:** Open door when many mismatched particles near separator
+- **Feedback:** 
+  - Orange bar fills quickly = costly measurements
+  - Blue bar decreases = good separation achieved
+  - Both bars worsen = bad measurement (wasted budget)
+
+### Thermodynamic Interpretation
+
+**Szilard's Paradox:**
+- Without entropy cost: could violate Second Law (entropy decrease)
+- With Landauer's principle: information erasure costs kBT·ln(2)
+- Each measurement requires recording result → must erase → costs energy
+- **Total entropy (system + demon) never decreases** → Second Law preserved
+
+**Budget Represents:**
+- Total erasing/recording capability
+- Finite information processing power
+- Physical reality: demons have limits
+- Prevents perpetual motion without cost
+
+### Bug Prevention Implemented
+
+1. **State Transition Logic:**
+   - `doorWasPreviouslyOpen` flag tracks previous state
+   - Cost only applies when `doorOpen && !doorWasPreviouslyOpen` (true transition)
+   - Prevents cost from being applied every frame while door open
+
+2. **Budget Clamping:**
+   - `if (demonEntropy > demonBudget) demonEntropy = demonBudget` → caps at 500
+   - `if (demonEntropy < 0) demonEntropy = 0` → prevents negative
+   - Ensures valid state always
+
+3. **Gauge Safety:**
+   - `Math.min(100, demonGaugePercent)` → prevents over-100% display
+   - Percentage calculations use clamped values
+   - DOM updates check `if (element)` before accessing
+
+4. **Numerical Safety:**
+   - Uses existing `calcEntropy()` with NaN checks
+   - Calculates per-chamber then sums total
+   - Avoids direct division by zero
+   - Gauge calculations use safe arithmetic
+
+5. **HTML Safety:**
+   - All element references checked before use
+   - Missing elements won't crash system
+   - Graceful degradation if HTML changes
+
+### User-Facing Behavior
+
+**Display Changes:**
+- "Demon Entropy" now shows remaining budget (descending from 500)
+- Orange gauge fills as budget consumed (visual feedback of cost)
+- Blue gauge shows system entropy (lower is better)
+
+**Game Mechanics:**
+- Opening door once = costs ~0.7 units
+- User must balance system entropy decrease vs. budget
+- Creates strategic tension in gameplay
+- Rewards careful, well-timed measurements
+
+### Example Scenario
+
+1. Start: System Entropy = 50, Demon Budget = 500
+2. Open door (costs 0.69) → Demon Budget now 499.31
+3. Particles sort while door open
+4. System Entropy drops to 40
+5. Close door to save budget
+6. Open door again (costs 0.69) → Demon Budget now 498.62
+7. Repeat: minimize entropy while respecting budget
+8. Goal: Get system entropy <10 with budget remaining >100
+
+---
+
+## 11. Perfect Demon Mode Toggle
+
+### Problem
+User wanted to see what the ideal Maxwell's demon would accomplish - perfectly sorting all red particles to the right and all blue to the left, regardless of their natural motion.
+
+### Changes Made
+
+**HTML Changes (`index.html`):**
+Added a Perfect Demon toggle in the instructions section:
+```html
+<div class="perfect-demon-toggle">
+    <label for="perfect-demon-checkbox" class="checkbox-label">
+        <input type="checkbox" id="perfect-demon-checkbox" class="checkbox-input">
+        <span class="checkbox-text">Perfect Demon Mode</span>
+    </label>
+    <p class="toggle-hint">Sorts all blue ◀︎ left | right ▶︎ all red</p>
+</div>
+```
+
+**CSS Styling (`style/style.css`):**
+Added custom checkbox styling with:
+- Visual feedback on hover (glow effect)
+- Checked state shows cyan gradient with checkmark
+- Smooth transitions
+- Helpful hint text below toggle
+- Professional appearance matching theme
+
+**JavaScript Changes (`scripts/main.js`):**
+
+1. **Added perfectMode variable:**
+```javascript
+let perfectMode = false;    // Perfect demon mode toggle
+```
+
+2. **Created setupPerfectDemon() function:**
+```javascript
+function setupPerfectDemon() {
+  let perfectCheckbox = document.getElementById('perfect-demon-checkbox');
+  if (perfectCheckbox) {
+    perfectCheckbox.addEventListener('change', (e) => {
+      perfectMode = e.target.checked;
+    });
+  }
+}
+```
+
+3. **Created arrangePerfectParticles() function:**
+```javascript
+function arrangePerfectParticles() {
+  for (let b of balls) {
+    if (b.type === 'blue') {
+      // Keep blue particles in left chamber
+      b.pos.x = constrain(b.pos.x, RADIUS, width / 2 - RADIUS);
+    } else {
+      // Keep red particles in right chamber
+      b.pos.x = constrain(b.pos.x, width / 2 + RADIUS, width - RADIUS);
+    }
+  }
+}
+```
+
+4. **Integrated into draw() function:**
+- Calls `arrangePerfectParticles()` before physics simulation
+- Runs every frame while mode enabled
+- Preserves Y positions and velocities
+
+### How It Works
+
+**Visual Demonstration:**
+- When enabled, particles are constantly constrained to their correct chamber
+- All blue stay left of center, all red stay right
+- Creates ideal scenario showing what a perfect demon would achieve
+- System entropy drops dramatically
+
+**Implementation Details:**
+- Uses `constrain()` for soft boundary enforcement
+- Particles at boundaries softly constrained
+- Velocities preserved (still bouncing around)
+- Entropy calculations still valid
+- No visual lag or jumping
+
+### Bug Prevention
+
+1. **Null Safety:** Checkbox existence verified before listener
+2. **Constraint Safety:** `constrain()` prevents invalid positions
+3. **State Management:** perfectMode flag properly tracked
+4. **Physics Preservation:** Only X position constrained, not velocities
+
+### User Experience
+
+**Demonstration Use Case:**
+1. Run normal simulation watching particles mix
+2. Enable "Perfect Demon Mode" checkbox
+3. Observe instant perfect separation
+4. Watch system entropy drop to near-zero
+5. Compare ideal case vs. actual demon performance
+6. Understand thermodynamic principles visually
+
+**Educational Value:**
+- Shows ideal vs. real demon efficiency
+- Demonstrates entropy minimization limit
+- Visual proof of second law of thermodynamics
+
+---
+
+
