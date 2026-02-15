@@ -7,7 +7,8 @@ const ballCount = 50;
 var leftBalls = [];
 var rightBalls = [];
 
-var MASS = 3.35e-26; // mass of 1 neon atom in kg
+const MASS = 3.35e-26; // mass of 1 neon atom in kg
+const k_b = 1.380649e-23; // boltzman constant in joules per kelvin
 
 function setup() {
 	frameRate(60);

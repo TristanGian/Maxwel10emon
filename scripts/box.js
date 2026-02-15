@@ -52,7 +52,7 @@ class Box {
 		let avgSpeed = this.avg(velocities)
 
 		// use equipartition theorem to find temperature
-		return MASS * (avgSpeed) / 3; // assuming mass and boltzman constant = 1
+		return MASS * (avgSpeed) / (3*k_b); // assuming mass and boltzman constant = 1
 	}
 
 	factorial(n) {
