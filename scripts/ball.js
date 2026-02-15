@@ -1,13 +1,14 @@
 class Ball {
   constructor(x, y, r, id, allBalls, particleType = 'blue') {
     this.pos = createVector(x, y); // vector object from p5.js
-    this.vel = p5.Vector.random2D().mult(random(2, 5)); // random unit velocity vector from p5.js multiplied by random speed
+    this.vel = this.createInitialVelocity(particleType);
     this.r = r;
-    this.m = r * 0.1; // Mass proportional to size
+    this.m = r * 0.1; // Mass proportional to size 
     this.id = id;
     this.others = allBalls;
     this.prevX = x; // Track previous position for wall crossing detection
-    this.type = particleType; // 'blue' or 'red'
+    this.type = particleType; // 'blue' (slow) or 'red' (fast)
+    this.lastDoorHitTime = -1000; // Track when ball last hit door area (prevent duplicate counting)
   }
 
 // Attribute,Data Type,Purpose
@@ -22,6 +23,9 @@ class Ball {
     this.prevX = this.pos.x; // Store previous x position
     this.pos.add(this.vel);
 
+    // Update type based on current speed
+    this.updateTypeBySpeed();
+
     //Center Wall Bounce - Detect crossing from either side
     let centerX = width / 2;
     let crossedFromLeft = this.prevX < centerX && this.pos.x > centerX;
@@ -30,6 +34,17 @@ class Ball {
     if (crossedFromLeft || crossedFromRight) {
       // Check if ball is in door opening area
       let inDoorArea = this.pos.y > doorTop && this.pos.y < doorBottom;
+      
+      // Track door hit: increment demon entropy when particle hits door area
+      if (inDoorArea) {
+        let currentTime = frameCount;
+        // Only count if last hit was more than 5 frames ago (prevent multi-counting same collision)
+        if (currentTime - this.lastDoorHitTime > 5) {
+          this.lastDoorHitTime = currentTime;
+          // Signal main.js to increment demon entropy (Landauer's principle: cost of measurement)
+          onDoorAreaHit();
+        }
+      }
       
       if (perfectMode) {
         // In perfect mode, only allow correct particles to pass through door area
@@ -64,6 +79,29 @@ class Ball {
       this.pos.y = this.r;
       this.vel.y *= -1;
     }
+  }
+
+  createInitialVelocity(particleType) {
+    let threshold = (typeof SPEED_THRESHOLD === 'number') ? SPEED_THRESHOLD : 3.5;
+    let minSpeed = 2;
+    let maxSpeed = 5;
+    let speedMin = minSpeed;
+    let speedMax = maxSpeed;
+
+    if (particleType === 'blue' && threshold > minSpeed) {
+      speedMin = minSpeed;
+      speedMax = Math.max(minSpeed + 0.1, threshold - 0.1);
+    } else if (particleType === 'red' && threshold < maxSpeed) {
+      speedMin = Math.min(maxSpeed - 0.1, threshold + 0.1);
+      speedMax = maxSpeed;
+    }
+
+    return p5.Vector.random2D().mult(random(speedMin, speedMax));
+  }
+
+  updateTypeBySpeed() {
+    let threshold = (typeof SPEED_THRESHOLD === 'number') ? SPEED_THRESHOLD : 3.5;
+    this.type = this.vel.mag() >= threshold ? 'red' : 'blue';
   }
 
   collide() {
@@ -104,15 +142,15 @@ class Ball {
   }
 
   show() {
-    // Color schemes based on particle type
+    // Color schemes based on speed threshold
     let mainColor, glowColor, rimColor;
     
     if (this.type === 'red') {
-      mainColor = [255, 82, 82, 220];      // Red
+      mainColor = [255, 82, 82, 220];      // Fast (red)
       glowColor = [255, 82, 82, 40];       // Red glow
       rimColor = [255, 120, 120, 180];     // Red rim
     } else {
-      mainColor = [0, 212, 255, 220];      // Blue
+      mainColor = [0, 212, 255, 220];      // Slow (blue)
       glowColor = [100, 181, 246, 40];     // Blue glow
       rimColor = [100, 181, 246, 180];     // Blue rim
     }

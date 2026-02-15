@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>    
 
     <!-- Imports of scripts -->
+    <script src="scripts/entropyCalculator.js"></script>
     <script src="scripts/ball.js"></script>
     <script src="scripts/main.js"></script>
 	<script src="scripts/demon.js"></script>
@@ -29,6 +30,21 @@
                 <h1>Maxwell's Demon</h1>
                 <p class="subtitle">Thermodynamics Simulation</p>
             </div>
+			<div class="info-section">
+				<h3>ℹ️ Instructions & Demo</h3>
+				<div class="instructions">
+					<p><kbd>SPACE</kbd> Toggle door</p>
+					<p class="door-status">Door: <span id="door-status" class="status-closed">CLOSED</span></p>
+				</div>
+				<div class="perfect-demon-toggle">
+					<label for="perfect-demon-checkbox" class="checkbox-label">
+						<input type="checkbox" id="perfect-demon-checkbox" class="checkbox-input">
+						<span class="checkbox-text">Perfect Demon Mode</span>
+					</label>
+					<p class="toggle-hint">Sorts all blue ◀︎ left | right ▶︎ all red</p>
+				</div>
+				<a href="how-it-works.html" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: rgba(100, 181, 246, 0.2); border: 1px solid rgba(100, 181, 246, 0.4); color: #64b5f6; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; cursor: pointer; width: 100%; text-align: center;">📚 How It Works</a>
+			</div>
 
             <div class="info-section">
                 <h3>📊 Entropy Measurements</h3>
@@ -52,7 +68,7 @@
                     <label>Total Energy</label>
                     <div class="stat-value">
                         <span id="total-energy">0.0</span>
-                        <span class="unit">J</span>
+                        <span class="unit">eV</span>
                     </div>
                 </div>
 
@@ -138,27 +154,36 @@
                 </div>
             </div>
 
+
             <div class="info-section">
-                <h3>ℹ️ Instructions & Demo</h3>
-                <div class="instructions">
-                    <p><kbd>SPACE</kbd> Toggle door</p>
-                    <p class="door-status">Door: <span id="door-status" class="status-closed">CLOSED</span></p>
-                </div>
-                <div class="perfect-demon-toggle">
-                    <label for="perfect-demon-checkbox" class="checkbox-label">
-                        <input type="checkbox" id="perfect-demon-checkbox" class="checkbox-input">
-                        <span class="checkbox-text">Perfect Demon Mode</span>
+                <h3>Chart Toggles</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, 0.85);">
+                        <input type="checkbox" id="toggle-entropy-chart" checked>
+                        Entropy Over Time
                     </label>
-                    <p class="toggle-hint">Sorts all blue ◀︎ left | right ▶︎ all red</p>
+                    <label style="display: flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, 0.85);">
+                        <input type="checkbox" id="toggle-temperature-chart" checked>
+                        Temperature Over Time
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, 0.85);">
+                        <input type="checkbox" id="toggle-multiplicity-chart" checked>
+                        Multiplicity Curve
+                    </label>
                 </div>
             </div>
 
-            <div class="info-section entropy-chart-section">
+            <div class="info-section entropy-chart-section" id="entropy-chart-section">
                 <h3>📈 Entropy Over Time</h3>
                 <canvas id="entropyChart"></canvas>
             </div>
 
-            <div class="info-section entropy-chart-section">
+            <div class="info-section entropy-chart-section" id="temperature-chart-section">
+                <h3>🌡️ Temperature Over Time</h3>
+                <canvas id="temperatureChart"></canvas>
+            </div>
+
+            <div class="info-section entropy-chart-section" id="multiplicity-chart-section">
                 <h3>📊 Multiplicity Curve</h3>
                 <canvas id="multiplicityChart"></canvas>
             </div>
@@ -169,6 +194,9 @@
         </aside>
 
         <main id="canvas-container"> 
+            <div id="perfect-demon-banner" class="perfect-demon-banner" aria-live="polite">
+                When I'm in charge Entropy shivers!
+            </div>
             <img src="assets/demon_closed.png" alt="Demon Image" class="demon-overlay">
             <div class="gauge-container-vertical">
                 <div class="gauge-label" style="top: -25px;">Entropy</div>

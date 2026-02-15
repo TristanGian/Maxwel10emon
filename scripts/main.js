@@ -9,7 +9,7 @@ let leftEntropy = 0;
 let rightEntropy = 0;
 let systemEntropy = 0;      // Total system entropy
 let demonEntropy = 0;       // Demon's entropy cost accumulated
-let demonBudget = 500;      // Maximum demon entropy budget
+let demonBudget = 0;        // Maximum demon entropy budget (equals max system entropy)
 let kBT_ln2 = 0.693;        // Cost per measurement: kBT*ln(2)
 let doorWasPreviouslyOpen = false;  // Track door state for transitions
 let perfectMode = false;    // Perfect demon mode toggle
@@ -23,6 +23,15 @@ let timeStep = 0;                       // Time counter for x-axis
 const MAX_CHART_POINTS = 300;          // Maximum data points to display
 let multiplicityChart = null;           // Chart.js instance for multiplicity curve
 let currentStateIndex = 0;              // Index of current state on multiplicity curve
+let temperatureChart = null;            // Chart.js instance for temperature over time
+let leftTempHistory = [];               // Track left temperature over time
+let rightTempHistory = [];              // Track right temperature over time
+let lastLeftTemperature = 0;            // Track last left temperature to detect changes
+let lastRightTemperature = 0;           // Track last right temperature to detect changes
+let tempTimeStep = 0;                   // Time counter for temperature chart
+let showEntropyChart = true;            // Toggle for entropy chart
+let showMultiplicityChart = true;       // Toggle for multiplicity chart
+let showTemperatureChart = true;        // Toggle for temperature chart
 let totalEnergy = 0;                    // Total kinetic energy of the system
 let leftEnergy = 0;                     // Kinetic energy in left chamber
 let rightEnergy = 0;                    // Kinetic energy in right chamber
@@ -30,8 +39,10 @@ let systemTemperature = 0;              // System temperature in Kelvin
 let leftTemperature = 0;                // Left chamber temperature in Kelvin
 let rightTemperature = 0;               // Right chamber temperature in Kelvin
 const SPEED_SCALE = 0.01;               // Conversion factor: pixels/frame to m/s
-const MASS_SCALE = 0.001;               // Conversion factor: radius units to kg
+const SPEED_THRESHOLD = 3.5;            // Speed threshold for slow (blue) vs fast (red)
+const MASS_SCALE = 1e-24;               // Conversion factor: radius units to kg
 const k_B = 1.380649e-23;               // Boltzmann's constant in J/K
+const J_TO_EV = 6.242e18;               // Conversion factor: Joules to eV
 
 function setup() {
   frameRate(60); 
@@ -60,11 +71,67 @@ function setup() {
   // Setup perfect demon toggle
   setupPerfectDemon();
   
+  // Ensure banner reflects initial state
+  let banner = document.getElementById('perfect-demon-banner');
+  if (banner) {
+    banner.style.display = perfectMode ? 'block' : 'none';
+  }
+
+  // Setup chart toggles for performance
+  setupChartToggles();
+  
   // Initialize entropy chart
-  initEntropyChart();
+  if (showEntropyChart) {
+    initEntropyChart();
+  }
   
   // Initialize multiplicity curve
-  initMultiplicityChart();
+  if (showMultiplicityChart) {
+    initMultiplicityChart();
+  }
+
+  // Initialize temperature chart
+  if (showTemperatureChart) {
+    initTemperatureChart();
+  }
+}
+
+/**
+ * Calculate the maximum possible entropy of the system
+ * This occurs when particles are equally distributed and colors are equally mixed
+ * The demon's budget is set to this value
+ */
+function calculateMaxSystemEntropy() {
+  if (blueCount + redCount === 0) return 0;
+  
+  let area_box = (width / 2) * height;
+  let n = area_box / (Math.PI * RADIUS ** 2); // number of available microstates
+  
+  // Maximum entropy per chamber: equal distribution of particles and colors
+  let maxLeftBlue = blueCount / 2;
+  let maxLeftRed = redCount / 2;
+  let maxLeftTotal = (blueCount + redCount) / 2;
+  
+  // Calculate entropy for maximum state (equilibrium)
+  let maxChamberEntropy = entropyCalc.calculateChamberEntropy(n, maxLeftTotal, maxLeftBlue);
+  let maxSystemEntropy = maxChamberEntropy * 2; // Both chambers have same entropy at equilibrium
+  
+  return maxSystemEntropy;
+}
+
+/**
+ * Called when a particle hits the door area
+ * Implements Landauer's Principle: demon entropy increases due to measurement cost
+ * Each measurement of a particle at the door costs kBT*ln(2) in entropy
+ */
+function onDoorAreaHit() {
+  // Increment demon entropy by the cost of measurement (Landauer's principle)
+  demonEntropy += kBT_ln2;
+  
+  // Clamp to budget maximum (which is max system entropy)
+  if (demonEntropy > demonBudget) {
+    demonEntropy = demonBudget;
+  }
 }
 
 function initializeParticles() {
@@ -100,6 +167,10 @@ function initializeParticles() {
     ball.others = balls;
   }
   
+  // Calculate and set the demon budget to maximum system entropy
+  demonBudget = calculateMaxSystemEntropy();
+  demonEntropy = 0; // Reset accumulated entropy
+  
   // Reset entropy tracking and chart when particles change
   systemEntropyHistory = [];
   demonEntropyHistory = [];
@@ -107,7 +178,7 @@ function initializeParticles() {
   lastDemonEntropy = 0;
   timeStep = 0;
   demonEntropy = 0;
-  if (entropyChart) {
+  if (entropyChart && showEntropyChart) {
     entropyChart.data.labels = [];
     entropyChart.data.datasets[0].data = [];
     entropyChart.data.datasets[1].data = [];
@@ -115,8 +186,21 @@ function initializeParticles() {
   }
   
   // Reinitialize multiplicity chart with new particle counts
-  if (multiplicityChart) {
+  if (multiplicityChart && showMultiplicityChart) {
     initMultiplicityChart();
+  }
+
+  // Reset temperature tracking
+  leftTempHistory = [];
+  rightTempHistory = [];
+  lastLeftTemperature = 0;
+  lastRightTemperature = 0;
+  tempTimeStep = 0;
+  if (temperatureChart && showTemperatureChart) {
+    temperatureChart.data.labels = [];
+    temperatureChart.data.datasets[0].data = [];
+    temperatureChart.data.datasets[1].data = [];
+    temperatureChart.update();
   }
 }
 
@@ -128,6 +212,8 @@ function setupSliders() {
     blueSlider.addEventListener('input', (e) => {
       blueCount = parseInt(e.target.value);
       document.getElementById('blue-value').textContent = blueCount;
+      // Recalculate demon budget when particle count changes
+      demonBudget = calculateMaxSystemEntropy();
       initializeParticles();
     });
   }
@@ -136,6 +222,8 @@ function setupSliders() {
     redSlider.addEventListener('input', (e) => {
       redCount = parseInt(e.target.value);
       document.getElementById('red-value').textContent = redCount;
+      // Recalculate demon budget when particle count changes
+      demonBudget = calculateMaxSystemEntropy();
       initializeParticles();
     });
   }
@@ -146,7 +234,70 @@ function setupPerfectDemon() {
   if (perfectCheckbox) {
     perfectCheckbox.addEventListener('change', (e) => {
       perfectMode = e.target.checked;
+      let banner = document.getElementById('perfect-demon-banner');
+      if (banner) {
+        banner.style.display = perfectMode ? 'block' : 'none';
+      }
     });
+  }
+}
+
+function setupChartToggles() {
+  let entropyToggle = document.getElementById('toggle-entropy-chart');
+  let multiplicityToggle = document.getElementById('toggle-multiplicity-chart');
+  let temperatureToggle = document.getElementById('toggle-temperature-chart');
+
+  if (entropyToggle) {
+    showEntropyChart = entropyToggle.checked;
+    entropyToggle.addEventListener('change', (e) => {
+      showEntropyChart = e.target.checked;
+      setChartSectionVisible('entropy-chart-section', showEntropyChart);
+      if (showEntropyChart) {
+        initEntropyChart();
+      } else if (entropyChart) {
+        entropyChart.destroy();
+        entropyChart = null;
+      }
+    });
+  }
+
+  if (multiplicityToggle) {
+    showMultiplicityChart = multiplicityToggle.checked;
+    multiplicityToggle.addEventListener('change', (e) => {
+      showMultiplicityChart = e.target.checked;
+      setChartSectionVisible('multiplicity-chart-section', showMultiplicityChart);
+      if (showMultiplicityChart) {
+        initMultiplicityChart();
+      } else if (multiplicityChart) {
+        multiplicityChart.destroy();
+        multiplicityChart = null;
+      }
+    });
+  }
+
+  if (temperatureToggle) {
+    showTemperatureChart = temperatureToggle.checked;
+    temperatureToggle.addEventListener('change', (e) => {
+      showTemperatureChart = e.target.checked;
+      setChartSectionVisible('temperature-chart-section', showTemperatureChart);
+      if (showTemperatureChart) {
+        initTemperatureChart();
+      } else if (temperatureChart) {
+        temperatureChart.destroy();
+        temperatureChart = null;
+      }
+    });
+  }
+
+  setChartSectionVisible('entropy-chart-section', showEntropyChart);
+  setChartSectionVisible('multiplicity-chart-section', showMultiplicityChart);
+  setChartSectionVisible('temperature-chart-section', showTemperatureChart);
+}
+
+function setChartSectionVisible(sectionId, isVisible) {
+  let section = document.getElementById(sectionId);
+  if (section) {
+    section.style.display = isVisible ? 'block' : 'none';
   }
 }
 
@@ -278,65 +429,55 @@ function draw() {
   chargePerfectModeCrossings();
   
   // Update entropy chart
-  updateEntropyChart();
+  if (showEntropyChart) {
+    updateEntropyChart();
+  }
   
   // Update multiplicity chart to show current state
-  updateMultiplicityChart();
+  if (showMultiplicityChart) {
+    updateMultiplicityChart();
+  }
   
   // Calculate and display total energy
   calculateAndDisplayEnergy();
+
+  // Update temperature chart
+  if (showTemperatureChart) {
+    updateTemperatureChart();
+  }
 }
 
+// DEPRECATED: This function is now handled by EntropyCalculator class
+// Kept as wrapper for backward compatibility
 function calcEntropy(blue_particles, box_particles, area_box, radius) {
-    // Avoid division by zero and logarithm of zero
     if (box_particles === 0 || area_box === 0) return 0;
     
     let n = area_box / (Math.PI * radius ** 2); // number of available microstates
     let k = box_particles;
     let b = blue_particles;
     
-    // Safety checks to avoid invalid logarithms
     if (k >= n) return 0;
     
-    // ===== SPATIAL ENTROPY (current formula) =====
-    let spatialEntropy = 0;
-    
-    if (b > 0 && b < k && k < n) {
-        let term1 = n * Math.log(n / (n - k));
-        let term2 = k * Math.log((n - k) / (k - b));
-        let term3 = b * Math.log((k - b) / b);
-        
-        // Check for NaN values
-        if (!isNaN(term1)) spatialEntropy += term1;
-        if (!isNaN(term2)) spatialEntropy += term2;
-        if (!isNaN(term3)) spatialEntropy += term3;
-    }
-    
-    // ===== COMBINATORIAL ENTROPY (color distinguishability) =====
-    // S_combinatorial = ln(k! / (b! * (k-b)!))
-    // This represents how many ways to arrange blue vs red particles
-    // Using Stirling's approximation: ln(n!) ≈ n*ln(n) - n
-    let colorEntropy = 0;
-    if (b > 0 && (k - b) > 0) {
-        let lnKFactorial = k * Math.log(k) - k;
-        let lnBFactorial = b * Math.log(b) - b;
-        let lnKMinusBFactorial = (k - b) * Math.log(k - b) - (k - b);
-        colorEntropy = lnKFactorial - lnBFactorial - lnKMinusBFactorial;
-        
-        if (isNaN(colorEntropy)) colorEntropy = 0;
-    }
-    
-    // Total entropy = spatial + combinatorial
-    return spatialEntropy + colorEntropy;
+    // Delegate to EntropyCalculator
+    return entropyCalc.calculateChamberEntropy(n, k, b);
 }
 
 function updateEntropyDisplay(leftBlue, leftRed, rightBlue, rightRed) {
     // Calculate the area of each chamber (half the canvas)
     let area_box = (width / 2) * height;
+    let n = area_box / (Math.PI * RADIUS ** 2); // number of available microstates
     
-    // Calculate system entropy for each chamber
-    let leftChamberEntropy = calcEntropy(leftBlue, leftBlue + leftRed, area_box, RADIUS);
-    let rightChamberEntropy = calcEntropy(rightBlue, rightBlue + rightRed, area_box, RADIUS);
+    // Use EntropyCalculator for robust entropy calculations
+    let leftChamberEntropy = entropyCalc.calculateChamberEntropy(
+        n, 
+        leftBlue + leftRed,  // total particles
+        leftBlue             // blue particles
+    );
+    let rightChamberEntropy = entropyCalc.calculateChamberEntropy(
+        n, 
+        rightBlue + rightRed, // total particles
+        rightBlue             // blue particles
+    );
     let newSystemEntropy = leftChamberEntropy + rightChamberEntropy;
     
     // Track if door was opened or closed (each measurement costs kBT*ln(2))
@@ -371,27 +512,22 @@ function updateEntropyDisplay(leftBlue, leftRed, rightBlue, rightRed) {
         demEntropyElement.textContent = demonEntropy.toFixed(2);
     }
     
-    // Update demon entropy budget gauge bar (0 to 500 scale)
-    // This shows how much of the demon's entropy budget has been used
-    let demonGaugePercent = (demonEntropy / demonBudget) * 100;
+    // Update combined entropy gauge bar
+    // Shows total of (System Entropy + Demon Entropy) from 0 to 2x max entropy
+    // At simulation start: sys entropy ≈ max entropy, dem entropy = 0, so combined ≈ 50% full
+    let combinedEntropy = systemEntropy + demonEntropy;
+    let maxGaugeValue = demonBudget * 2; // Max scale is 2x the maximum system entropy
+    let combinedGaugePercent = maxGaugeValue > 0 ? (combinedEntropy / maxGaugeValue) * 100 : 0;
+    
     let demGauge = document.getElementById('dem-gauge');
     if (demGauge) {
-        demGauge.style.height = Math.min(100, demonGaugePercent) + '%';
+        demGauge.style.height = Math.min(100, combinedGaugePercent) + '%';
     }
     
-    // Update system entropy gauge bar
-    // Calculate maximum possible entropy (when particles are equally distributed)
-    // Max entropy = when half the particles are on each side
-    let maxLeftBlue = blueCount / 2;
-    let maxLeftRed = redCount / 2;
-    let maxLeftTotal = (blueCount + redCount) / 2;
-    let maxChamberEntropy = calcEntropy(maxLeftBlue, maxLeftTotal, area_box, RADIUS);
-    let maxSystemEntropy = maxChamberEntropy * 2; // Both chambers have same entropy at equilibrium
-    
-    let sysGaugePercent = maxSystemEntropy > 0 ? (systemEntropy / maxSystemEntropy) * 100 : 0;
+    // Hide sys-gauge as we're using dem-gauge for combined entropy
     let sysGauge = document.getElementById('sys-gauge');
     if (sysGauge) {
-        sysGauge.style.height = Math.min(100, sysGaugePercent) + '%';
+        sysGauge.style.height = '0%';
     }
 }
 
@@ -535,6 +671,125 @@ function updateEntropyChart() {
   entropyChart.update('none'); // Update without animation for smooth real-time display
 }
 
+// Initialize temperature chart (left and right chamber over time)
+function initTemperatureChart() {
+  let chartCanvas = document.getElementById('temperatureChart');
+  if (!chartCanvas) return;
+
+  if (temperatureChart) {
+    temperatureChart.destroy();
+  }
+
+  temperatureChart = new Chart(chartCanvas, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Left Chamber Temp',
+          data: [],
+          borderColor: '#00d4ff',
+          backgroundColor: 'rgba(0, 212, 255, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: false,
+          pointRadius: 0,
+          pointHoverRadius: 5
+        },
+        {
+          label: 'Right Chamber Temp',
+          data: [],
+          borderColor: '#ff5252',
+          backgroundColor: 'rgba(255, 82, 82, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: false,
+          pointRadius: 0,
+          pointHoverRadius: 5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            color: '#ccc',
+            font: { family: "'Inter', sans-serif", size: 12 },
+            usePointStyle: true,
+            padding: 15
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Temperature (K)'
+          },
+          ticks: {
+            color: '#888',
+            font: { family: "'JetBrains Mono', monospace", size: 11 }
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)',
+            drawBorder: false
+          }
+        },
+        x: {
+          ticks: {
+            color: '#888',
+            font: { family: "'JetBrains Mono', monospace", size: 11 }
+          },
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)',
+            drawBorder: false
+          }
+        }
+      }
+    }
+  });
+}
+
+// Update the temperature chart with new data
+function updateTemperatureChart() {
+  if (!temperatureChart) return;
+
+  let leftTempChanged = Math.abs(leftTemperature - lastLeftTemperature) > 0.01;
+  let rightTempChanged = Math.abs(rightTemperature - lastRightTemperature) > 0.01;
+
+  if (!leftTempChanged && !rightTempChanged) {
+    return;
+  }
+
+  lastLeftTemperature = leftTemperature;
+  lastRightTemperature = rightTemperature;
+  tempTimeStep++;
+
+  if (leftTempHistory.length > MAX_CHART_POINTS) {
+    leftTempHistory.shift();
+    rightTempHistory.shift();
+    temperatureChart.data.labels.shift();
+  }
+
+  leftTempHistory.push(leftTemperature);
+  rightTempHistory.push(rightTemperature);
+  temperatureChart.data.labels.push(tempTimeStep);
+
+  temperatureChart.data.datasets[0].data = leftTempHistory;
+  temperatureChart.data.datasets[1].data = rightTempHistory;
+
+  temperatureChart.update('none');
+}
+
 // Initialize the multiplicity curve showing entropy vs particle distribution
 function initMultiplicityChart() {
   let chartCanvas = document.getElementById('multiplicityChart');
@@ -632,8 +887,10 @@ function initMultiplicityChart() {
 }
 
 // Calculate multiplicity data: entropy vs number of blue particles on left
+// Uses EntropyCalculator for robust entropy computations
 function calculateMultiplicityData() {
   let area_box = (width / 2) * height;
+  let n = area_box / (Math.PI * RADIUS ** 2); // number of available microstates
   let points = [];
   let totalBlue = blueCount;
   let totalRed = redCount;
@@ -652,8 +909,9 @@ function calculateMultiplicityData() {
     redLeft = Math.max(0, Math.min(redLeft, totalRed));
     let redRight = totalRed - redLeft;
     
-    let leftChamberEntropy = calcEntropy(blueLeft, blueLeft + redLeft, area_box, RADIUS);
-    let rightChamberEntropy = calcEntropy(blueRight, blueRight + redRight, area_box, RADIUS);
+    // Use EntropyCalculator for both chambers
+    let leftChamberEntropy = entropyCalc.calculateChamberEntropy(n, blueLeft + redLeft, blueLeft);
+    let rightChamberEntropy = entropyCalc.calculateChamberEntropy(n, blueRight + redRight, blueRight);
     let totalEntropy = leftChamberEntropy + rightChamberEntropy;
     
     points.push({ x: blueLeft, y: totalEntropy });
@@ -732,29 +990,30 @@ function calculateAndDisplayEnergy() {
   // Therefore: T = (2/3) * E / (N * k_B)
   let numParticles = balls.length;
   if (numParticles > 0 && totalEnergy > 0) {
-    systemTemperature = (2.0 / 3.0) * totalEnergy / (numParticles * k_B);
+    systemTemperature = (2.0 / 3.0) * totalEnergy / (numParticles * k_B) * 1e7;
   } else {
     systemTemperature = 0;
   }
   
   // Calculate left chamber temperature
   if (leftParticles > 0 && leftEnergy > 0) {
-    leftTemperature = (2.0 / 3.0) * leftEnergy / (leftParticles * k_B);
+    leftTemperature = (2.0 / 3.0) * leftEnergy / (leftParticles * k_B) * 1e7;
   } else {
     leftTemperature = 0;
   }
   
   // Calculate right chamber temperature
   if (rightParticles > 0 && rightEnergy > 0) {
-    rightTemperature = (2.0 / 3.0) * rightEnergy / (rightParticles * k_B);
+    rightTemperature = (2.0 / 3.0) * rightEnergy / (rightParticles * k_B) * 1e7;
   } else {
     rightTemperature = 0;
   }
   
-  // Display total energy in HTML
+  // Display total energy in HTML (converted to eV)
   let energyElement = document.getElementById('total-energy');
   if (energyElement) {
-    energyElement.textContent = totalEnergy.toFixed(6);
+    let energyEV = totalEnergy * J_TO_EV * 1e8;
+    energyElement.textContent = energyEV.toFixed(2);
   }
   
   // Display system temperature in HTML
