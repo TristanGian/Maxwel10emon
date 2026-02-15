@@ -198,19 +198,31 @@
             <div class="variable-list">
                 <div class="variable">
                     <span class="variable-name">E</span>
-                    <span class="variable-desc">Kinetic energy (Joules)</span>
+                    <span class="variable-desc">Kinetic energy (Joules, J)</span>
                 </div>
                 <div class="variable">
-                    <span class="variable-name">m</span>
-                    <span class="variable-desc">Mass of particle (kg)</span>
+                    <span class="variable-name">E_total</span>
+                    <span class="variable-desc">Total kinetic energy of all particles (Joules)</span>
                 </div>
                 <div class="variable">
-                    <span class="variable-name">v</span>
-                    <span class="variable-desc">Velocity magnitude (m/s)</span>
+                    <span class="variable-name">m, m_i</span>
+                    <span class="variable-desc">Mass of particle (kilograms, kg). In simulation: 10⁻²⁴ kg per particle</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">v, v_i</span>
+                    <span class="variable-desc">Velocity magnitude of particle (meters/second, m/s)</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">N</span>
-                    <span class="variable-desc">Total number of particles</span>
+                    <span class="variable-desc">Total number of particles in the system</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">i</span>
+                    <span class="variable-desc">Particle index (i = 1, 2, 3, ... N)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">∑</span>
+                    <span class="variable-desc">Summation symbol (sum over all particles)</span>
                 </div>
             </div>
             
@@ -225,7 +237,7 @@
             
             <h3>Equipartition Theorem</h3>
             <p class="description">
-                For a system in thermal equilibrium, the average kinetic energy is distributed equally among all quadratic degrees of freedom. For 2D motion (x and y components), there are 3 degrees of freedom:
+                For a system in thermal equilibrium, the average kinetic energy is distributed equally among all quadratic degrees of freedom. The simulation treats particles with 3 effective degrees of freedom:
             </p>
             
             <div class="math-box">
@@ -243,19 +255,27 @@
             <div class="variable-list">
                 <div class="variable">
                     <span class="variable-name">T</span>
-                    <span class="variable-desc">Temperature (Kelvin)</span>
+                    <span class="variable-desc">Temperature (Kelvin, K) - measure of average kinetic energy per particle</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">E</span>
-                    <span class="variable-desc">Total kinetic energy (Joules)</span>
+                    <span class="variable-desc">Total kinetic energy of all particles (Joules, J)</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">N</span>
-                    <span class="variable-desc">Number of particles</span>
+                    <span class="variable-desc">Total number of particles in the system (or chamber)</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">k_B</span>
-                    <span class="variable-desc">Boltzmann's constant = 1.380649 × 10⁻²³ J/K</span>
+                    <span class="variable-desc">Boltzmann's constant = 1.380649 × 10⁻²³ J/K (fundamental constant)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">3/2</span>
+                    <span class="variable-desc">Factor from equipartition: (1/2)k_BT per degree of freedom, × 3 degrees</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">2/3</span>
+                    <span class="variable-desc">Inverse factor: converting total energy to temperature</span>
                 </div>
             </div>
             
@@ -279,7 +299,7 @@
             </p>
             
             <div class="math-box">
-                $$S_{spatial} = n\ln\left(\frac{n}{n-k}\right) + k\ln\left(\frac{n-k}{k-b}\right) + b\ln\left(\frac{k-b}{b}\right)$$
+                $$\sigma_{spatial} = \ln \binom{n}{k}$$
             </div>
             
             <h3>Combinatorial Entropy (Color Distinguishability)</h3>
@@ -288,7 +308,7 @@
             </p>
             
             <div class="math-box">
-                $$S_{color} = \ln\left(\frac{k!}{b!(k-b)!}\right) \approx k\ln(k) - k - b\ln(b) + b - (k-b)\ln(k-b) + (k-b)$$
+                $$\sigma_{color} = \ln \binom{k}{b} = \ln\left(\frac{k!}{b!(k-b)!}\right) \approx k\ln(k) - k - b\ln(b) + b - (k-b)\ln(k-b) + (k-b)$$
             </div>
             
             <h3>Total System Entropy</h3>
@@ -297,21 +317,53 @@
             </p>
             
             <div class="math-box">
-                $$S_{total} = S_{left} + S_{right}$$
+                $$\sigma_{total} = \sigma_{left} + \sigma_{right}$$
             </div>
             
             <div class="variable-list">
                 <div class="variable">
+                    <span class="variable-name">σ_spatial</span>
+                    <span class="variable-desc">Spatial entropy component (distribution across positions)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">σ_color</span>
+                    <span class="variable-desc">Combinatorial entropy from color distinguishability</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">σ_total</span>
+                    <span class="variable-desc">Total system entropy (dimensionless)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">σ_left</span>
+                    <span class="variable-desc">Entropy of left chamber</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">σ_right</span>
+                    <span class="variable-desc">Entropy of right chamber</span>
+                </div>
+                <div class="variable">
                     <span class="variable-name">n</span>
-                    <span class="variable-desc">Number of available microstates (based on chamber area)</span>
+                    <span class="variable-desc">Number of available microstates = (chamber area) / (particle area)</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">k</span>
-                    <span class="variable-desc">Total particles in chamber</span>
+                    <span class="variable-desc">Total number of particles in chamber (blue + red)</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">b</span>
-                    <span class="variable-desc">Blue particles in chamber</span>
+                    <span class="variable-desc">Number of blue (slow) particles in chamber</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">k-b</span>
+                    <span class="variable-desc">Number of red (fast) particles in chamber</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">k!</span>
+                    <span class="variable-desc">Factorial of k (product: k × (k-1) × (k-2) × ... × 1)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">ln</span>
+                    <span class="variable-desc">Natural logarithm (logarithm base e)</span>
                 </div>
             </div>
             
@@ -343,16 +395,28 @@
             
             <div class="variable-list">
                 <div class="variable">
+                    <span class="variable-name">ΔS_min</span>
+                    <span class="variable-desc">Minimum entropy increase per bit of information erased</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">ΔS_demon</span>
+                    <span class="variable-desc">Entropy cost accumulated by the demon per measurement</span>
+                </div>
+                <div class="variable">
                     <span class="variable-name">k_B</span>
-                    <span class="variable-desc">Boltzmann's constant</span>
+                    <span class="variable-desc">Boltzmann's constant = 1.380649 × 10⁻²³ J/K</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">T</span>
-                    <span class="variable-desc">Temperature of the system</span>
+                    <span class="variable-desc">Temperature of the system (Kelvin, K)</span>
                 </div>
                 <div class="variable">
                     <span class="variable-name">ln(2)</span>
-                    <span class="variable-desc">Natural log of 2 ≈ 0.693</span>
+                    <span class="variable-desc">Natural logarithm of 2 ≈ 0.693147</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">Δ</span>
+                    <span class="variable-desc">Delta symbol: represents "change in" or "difference in"</span>
                 </div>
             </div>
             
@@ -371,11 +435,26 @@
             </p>
             
             <div class="math-box">
-                $$S_{demon, total} = \sum_{i=1}^{n} k_B T \ln(2)$$
+                $$S_{demon, total} = \sum_{i=1}^{n_{measurements}} k_B T \ln(2)$$
+            </div>
+            
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">S_demon,total</span>
+                    <span class="variable-desc">Total accumulated entropy cost of all demon measurements</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">n_measurements</span>
+                    <span class="variable-desc">Number of particle measurements made at the door</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">i</span>
+                    <span class="variable-desc">Measurement index (counts from 1 to n_measurements)</span>
+                </div>
             </div>
             
             <p class="description">
-                When the demon's accumulated entropy reaches 500, the demon can no longer operate (second law of thermodynamics becomes enforceable).
+                When the demon's accumulated entropy reaches the maximum system entropy, the demon can no longer operate (second law of thermodynamics becomes enforceable).
             </p>
             
             <div class="warning-box">
@@ -394,6 +473,13 @@
             
             <div class="math-box">
                 $$S_{sorted} = 0 \text{ (minimum entropy)}$$
+            </div>
+            
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">S_sorted</span>
+                    <span class="variable-desc">Entropy of perfectly sorted state (all blue left, all red right)</span>
+                </div>
             </div>
             
             <p class="description">
@@ -419,6 +505,33 @@
                 $$E_{before} = E_{after}$$
             </div>
             
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">→ (vector arrow)</span>
+                    <span class="variable-desc">Indicates a vector quantity (has magnitude and direction)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">p⃗</span>
+                    <span class="variable-desc">Momentum vector = mass × velocity (kg·m/s)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">p⃗_before</span>
+                    <span class="variable-desc">Total momentum before collision</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">p⃗_after</span>
+                    <span class="variable-desc">Total momentum after collision (equals p⃗_before)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">E_before</span>
+                    <span class="variable-desc">Total kinetic energy before collision (Joules)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">E_after</span>
+                    <span class="variable-desc">Total kinetic energy after collision (equals E_before)</span>
+                </div>
+            </div>
+            
             <h3>Collision Detection</h3>
             <p class="description">
                 Particles collide when the distance between centers is less than the sum of their radii:
@@ -428,13 +541,59 @@
                 $$d = |\vec{r}_1 - \vec{r}_2| < r_1 + r_2$$
             </div>
             
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">d</span>
+                    <span class="variable-desc">Distance between particle centers (pixels or meters)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">r⃗_1, r⃗_2</span>
+                    <span class="variable-desc">Position vectors of particle 1 and particle 2</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">r_1, r_2</span>
+                    <span class="variable-desc">Radii of particle 1 and particle 2 (pixels). In simulation: 10 pixels</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">| |</span>
+                    <span class="variable-desc">Absolute value or magnitude (distance must be positive)</span>
+                </div>
+            </div>
+            
             <h3>Wall and Door Handling</h3>
             <p class="description">
                 Particles bounce elastically off chamber walls. When the door is open, particles can pass through if they're in the correct door region. The door detection uses position tracking to prevent tunneling:
             </p>
             
             <div class="math-box">
-                $$\text{Door open} \iff y \in [doorTop, doorBottom] \text{ AND } door_{state} = OPEN$$
+                $$\text{Door passable} \iff y \in [doorTop, doorBottom] \text{ AND } door_{state} = OPEN$$
+            </div>
+            
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">y</span>
+                    <span class="variable-desc">Vertical position of particle (y-coordinate in pixels)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">doorTop</span>
+                    <span class="variable-desc">Upper boundary of door opening (pixels from top)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">doorBottom</span>
+                    <span class="variable-desc">Lower boundary of door opening (pixels from top)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">door_state</span>
+                    <span class="variable-desc">Boolean state: OPEN (true) or CLOSED (false)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">∈</span>
+                    <span class="variable-desc">"Element of" symbol: y is within the range [doorTop, doorBottom]</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">⟺</span>
+                    <span class="variable-desc">"If and only if" symbol: condition is both necessary and sufficient</span>
+                </div>
             </div>
         </div>
         
@@ -451,6 +610,25 @@
                 $$\Delta S_{universe} = \Delta S_{system} + \Delta S_{surroundings} \geq 0$$
             </div>
             
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">ΔS_universe</span>
+                    <span class="variable-desc">Total entropy change of the entire universe</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">ΔS_system</span>
+                    <span class="variable-desc">Entropy change of the particle system (can be negative)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">ΔS_surroundings</span>
+                    <span class="variable-desc">Entropy change of surroundings (includes demon's entropy)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">≥</span>
+                    <span class="variable-desc">"Greater than or equal to" symbol: entropy never decreases</span>
+                </div>
+            </div>
+            
             <h3>Why Maxwell's Demon Fails</h3>
             <p class="description">
                 In our simulation:
@@ -462,7 +640,18 @@
             </ol>
             
             <div class="math-box">
-                $$\Delta S_{total} = \Delta S_{system} + \Delta S_{demon} = 0 \text{ (or positive)}$$
+                $$\Delta S_{total} = \Delta S_{system} + \Delta S_{demon} \geq 0$$
+            </div>
+            
+            <div class="variable-list">
+                <div class="variable">
+                    <span class="variable-name">ΔS_total</span>
+                    <span class="variable-desc">Net change in total entropy (system + demon combined)</span>
+                </div>
+                <div class="variable">
+                    <span class="variable-name">ΔS_demon</span>
+                    <span class="variable-desc">Entropy accumulated by demon from measurements (always positive)</span>
+                </div>
             </div>
             
             <div class="info-box">
