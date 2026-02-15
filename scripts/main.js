@@ -7,6 +7,8 @@ const ballCount = 50;
 var leftBalls = [];
 var rightBalls = [];
 
+var MASS = 3.35e-26; // mass of 1 neon atom in kg
+
 function setup() {
 	frameRate(60);
 	// Make canvas responsive to container size
