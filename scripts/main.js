@@ -24,8 +24,14 @@ const MAX_CHART_POINTS = 300;          // Maximum data points to display
 let multiplicityChart = null;           // Chart.js instance for multiplicity curve
 let currentStateIndex = 0;              // Index of current state on multiplicity curve
 let totalEnergy = 0;                    // Total kinetic energy of the system
+let leftEnergy = 0;                     // Kinetic energy in left chamber
+let rightEnergy = 0;                    // Kinetic energy in right chamber
+let systemTemperature = 0;              // System temperature in Kelvin
+let leftTemperature = 0;                // Left chamber temperature in Kelvin
+let rightTemperature = 0;               // Right chamber temperature in Kelvin
 const SPEED_SCALE = 0.01;               // Conversion factor: pixels/frame to m/s
 const MASS_SCALE = 0.001;               // Conversion factor: radius units to kg
+const k_B = 1.380649e-23;               // Boltzmann's constant in J/K
 
 function setup() {
   frameRate(60); 
@@ -691,10 +697,14 @@ function updateMultiplicityChart() {
   multiplicityChart.update('none');
 }
 
-// Calculate total kinetic energy of the system
+// Calculate total kinetic energy of the system and per-chamber temperatures
 // Energy = 0.5 * m * v^2 (in Joules)
 function calculateAndDisplayEnergy() {
   totalEnergy = 0;
+  leftEnergy = 0;
+  rightEnergy = 0;
+  let leftParticles = 0;
+  let rightParticles = 0;
   
   for (let b of balls) {
     // Convert p5.js velocity (pixels/frame) to m/s
@@ -706,12 +716,63 @@ function calculateAndDisplayEnergy() {
     // Calculate kinetic energy for this particle: E = 0.5 * m * v^2
     let particleEnergy = 0.5 * massKG * speedMS * speedMS;
     totalEnergy += particleEnergy;
+    
+    // Add to left or right chamber energy
+    if (b.pos.x < width / 2) {
+      leftEnergy += particleEnergy;
+      leftParticles++;
+    } else {
+      rightEnergy += particleEnergy;
+      rightParticles++;
+    }
+  }
+  
+  // Calculate total system temperature from kinetic energy using equipartition theorem
+  // For 2D motion with 3 degrees of freedom: E = (3/2) * N * k_B * T
+  // Therefore: T = (2/3) * E / (N * k_B)
+  let numParticles = balls.length;
+  if (numParticles > 0 && totalEnergy > 0) {
+    systemTemperature = (2.0 / 3.0) * totalEnergy / (numParticles * k_B);
+  } else {
+    systemTemperature = 0;
+  }
+  
+  // Calculate left chamber temperature
+  if (leftParticles > 0 && leftEnergy > 0) {
+    leftTemperature = (2.0 / 3.0) * leftEnergy / (leftParticles * k_B);
+  } else {
+    leftTemperature = 0;
+  }
+  
+  // Calculate right chamber temperature
+  if (rightParticles > 0 && rightEnergy > 0) {
+    rightTemperature = (2.0 / 3.0) * rightEnergy / (rightParticles * k_B);
+  } else {
+    rightTemperature = 0;
   }
   
   // Display total energy in HTML
   let energyElement = document.getElementById('total-energy');
   if (energyElement) {
     energyElement.textContent = totalEnergy.toFixed(6);
+  }
+  
+  // Display system temperature in HTML
+  let tempElement = document.getElementById('system-temperature');
+  if (tempElement) {
+    tempElement.textContent = systemTemperature.toFixed(2);
+  }
+  
+  // Display left chamber temperature
+  let leftTempElement = document.getElementById('left-temperature');
+  if (leftTempElement) {
+    leftTempElement.textContent = leftTemperature.toFixed(2);
+  }
+  
+  // Display right chamber temperature
+  let rightTempElement = document.getElementById('right-temperature');
+  if (rightTempElement) {
+    rightTempElement.textContent = rightTemperature.toFixed(2);
   }
 }
 
