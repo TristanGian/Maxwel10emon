@@ -26,19 +26,15 @@ class Ball {
 		if (this.pos.x < RADIUS || this.pos.x > width - RADIUS) this.vel.x *= -1;
 		if (this.pos.y < RADIUS || this.pos.y > height - RADIUS) this.vel.y *= -1;
 
-		// at center wall
+		// in door (x position)
 		if (this.pos.x > width / 2 - RADIUS && this.pos.x < width / 2 + RADIUS) {
-
-			// at door
 			if (this.pos.y > doorTop && this.pos.y < doorBottom) {
-				if (doorOpen) {
+				if (doorOpen)
 					return;
-				}
-			}
-			this.vel.x *= -1;
-			// if still in door
-			if (this.pos.y > doorTop && this.pos.y < doorBottom) {
-				this.pos.x += 5*this.vel.x;
+				// if on door exactly
+						if (!doorOpen)
+							this.pos.x += this.vel.x
+				this.vel.x *= -1;
 			}
 		}
 	}

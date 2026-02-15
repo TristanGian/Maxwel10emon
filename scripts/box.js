@@ -10,15 +10,16 @@ class Box {
         this.particleCounts[c]++;
         this.totalBalls++;
     }
-    removeColor(c) {
-        this.particleCounts[c]--;
-        this.totalBalls--;
 
-    }
+	resetColors() {
+		this.particleCounts['blue'] = 0;
+		this.particleCounts['red'] = 0;
+		this.totalBalls = 0;
+	}
 
     // calculates entropy as the log of the multiplicity of the macrostate
 	calcEntropy() {
-        console.log(this.particleCounts);
+        //console.log(this.particleCounts);
 
 		let k = this.totalBalls;
         let b = this.particleCounts["blue"];
