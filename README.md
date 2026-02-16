@@ -28,6 +28,10 @@ An interactive web-based simulation exploring Maxwell's Demon, the Second Law of
   </table>
 </div>
 
+## Team
+Tristan Giannopoulos , Max Levine, Matt L'Ecuyer, Joris Theil
+
+
 ---
 
 ## 📖 Overview
