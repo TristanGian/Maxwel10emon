@@ -1,5 +1,8 @@
 # Maxwell's Demon: Thermodynamics Simulation
 
+<img align="center" src="assets/asepritebanner.png">
+
+
 <div align="center">
 
 ![Physics](https://img.shields.io/badge/Physics-Thermodynamics-blue)
@@ -13,10 +16,12 @@ An interactive web-based simulation exploring Maxwell's Demon, the Second Law of
 [**Web Application**](https://bepissbepisss.github.io/bepiss.bepisss.github.io/index.html)
 
 
-<img align="center" src="assets/asepritebanner.png">
-
 <img align="left" src="assets/asperitenetropy.png">
-## Entropy category winner - McGill Hackathon 10
+# Entropy category winner - McGill Hackathon 10
+
+
+
+
 
 
 ---
