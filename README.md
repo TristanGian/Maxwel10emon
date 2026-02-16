@@ -10,7 +10,7 @@
 
 An interactive web-based simulation exploring Maxwell's Demon, the Second Law of Thermodynamics, and Landauer's Principle through real-time particle physics and entropy visualization.
 
-[**Live Demo**](https://bepissbepisss.github.io/bepiss.bepisss.github.io/index.html)
+[**Web Application**](https://bepissbepisss.github.io/bepiss.bepisss.github.io/index.html)
 
 </div>
 <div align="center" src="assets/asepritebanner.png">
