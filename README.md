@@ -13,9 +13,9 @@ An interactive web-based simulation exploring Maxwell's Demon, the Second Law of
 [**Live Demo**](https://bepissbepisss.github.io/bepiss.bepisss.github.io/index.html)
 
 </div>
-[!banner](assets/asepritebanner.png)
+![banner](assets/asepritebanner.png)
 
-<img align="left" src="assets/aspritenetropy.png">
+<img align="left" src="assets/asperitenetropy.png">
 ##Entropy - category winner for McGill Physics Hackathon 10
 ---
 
