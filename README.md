@@ -15,14 +15,16 @@ An interactive web-based simulation exploring Maxwell's Demon, the Second Law of
 
 [**Web Application**](https://bepissbepisss.github.io/bepiss.bepisss.github.io/index.html)
 <div align="center">
-  <div style="display: flex; align-items: center; justify-content: center;">
-    <div style="margin-right: 20px;">
-      <img src="assets/asperitenetropy.png" alt="Entropy category" width="128" height="128">
-    </div>
-    <div>
-      <h1>Entropy category winner - McGill hackathon 10</h1>
-    </div>
-  </div>
+  <table>
+    <tr>
+      <td width="128" align="center">
+        <img src="assets/asperitenetropy.png" alt="Entropy catagory" width="128" height="128">
+      </td>
+      <td>
+        <h1>Entropy category winner - McGill hackathon 10</h1>
+      </td>
+    </tr>
+  </table>
 </div>
 
 ---
