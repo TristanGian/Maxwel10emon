@@ -16,7 +16,12 @@ An interactive web-based simulation exploring Maxwell's Demon, the Second Law of
 ![banner](assets/asepritebanner.png)
 
 <img align="left" src="assets/asperitenetropy.png">
-##Entropy - category winner for McGill Physics Hackathon 10
+## Entropy - category winner for McGill Physics Hackathon 10
+
+
+
+
+
 ---
 
 ## 📖 Overview
