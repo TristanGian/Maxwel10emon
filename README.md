@@ -14,16 +14,16 @@
 An interactive web-based simulation exploring Maxwell's Demon, the Second Law of Thermodynamics, and Landauer's Principle through real-time particle physics and entropy visualization.
 
 [**Web Application**](https://bepissbepisss.github.io/bepiss.bepisss.github.io/index.html)
+<div align="center">
+  <div style="display: flex; align-items: center; justify-content: center;">
+    <div style="margin-right: 20px;">
+      <img src="assets/asperitenetropy.png" alt="Entropy category" width="128" height="128">
+    </div>
+    <div>
+      <h1>Entropy category winner - McGill hackathon 10</h1>
+    </div>
+  </div>
 </div>
-
-<div>
-<img align="left" src="assets/asperitenetropy.png">
-** Entropy category winner - McGill Hackathon 10 **
-</div>
-<br>
-<br>
-<br>
-<br>
 
 ---
 
