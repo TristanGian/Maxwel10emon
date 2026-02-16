@@ -22,7 +22,7 @@ An interactive web-based simulation exploring Maxwell's Demon, the Second Law of
         <img src="assets/asperitenetropy.png" alt="Entropy catagory" width="128" height="128">
       </td>
       <td>
-        <h1>Entropy category winner - McGill hackathon 10</h1>
+        <h1>Entropy category winner - McGill Physics hackathon 10</h1>
       </td>
     </tr>
   </table>
